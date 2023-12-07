@@ -17,6 +17,31 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
-    "paths": {}
+    "paths": {
+      "lib/my-library": [
+        "libs/my-library/src"
+      ],
+      "lib/my-library/*": [
+        "libs/my-library/src/*"
+      ],
+      "lib/lib": [
+        "libs/lib/src"
+      ],
+      "lib/lib/*": [
+        "libs/lib/src/*"
+      ],
+      "lib/constants": [
+        "libs/constants/src"
+      ],
+      "lib/constants/*": [
+        "libs/constants/src/*"
+      ],
+      "lib/dtos": [
+        "libs/dtos/src"
+      ],
+      "lib/dtos/*": [
+        "libs/dtos/src/*"
+      ]
+    }
   }
 }

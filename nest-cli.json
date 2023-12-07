@@ -27,6 +27,33 @@
       "compilerOptions": {
         "tsConfigPath": "apps/student_service/tsconfig.app.json"
       }
+    },
+    "teacher_service": {
+      "type": "application",
+      "root": "apps/teacher_service",
+      "entryFile": "main",
+      "sourceRoot": "apps/teacher_service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/teacher_service/tsconfig.app.json"
+      }
+    },
+    "constants": {
+      "type": "library",
+      "root": "libs/constants",
+      "entryFile": "index",
+      "sourceRoot": "libs/constants/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/constants/tsconfig.lib.json"
+      }
+    },
+    "dtos": {
+      "type": "library",
+      "root": "libs/dtos",
+      "entryFile": "index",
+      "sourceRoot": "libs/dtos/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/dtos/tsconfig.lib.json"
+      }
     }
   }
 }
