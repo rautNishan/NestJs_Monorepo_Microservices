@@ -19,22 +19,13 @@
         "tsConfigPath": "apps/final_api/tsconfig.app.json"
       }
     },
-    "student_service": {
+    "micro_services": {
       "type": "application",
-      "root": "apps/student_service",
+      "root": "apps/micro_services",
       "entryFile": "main",
-      "sourceRoot": "apps/student_service/src",
+      "sourceRoot": "apps/micro_services/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/student_service/tsconfig.app.json"
-      }
-    },
-    "teacher_service": {
-      "type": "application",
-      "root": "apps/teacher_service",
-      "entryFile": "main",
-      "sourceRoot": "apps/teacher_service/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/teacher_service/tsconfig.app.json"
+        "tsConfigPath": "apps/micro_services/tsconfig.app.json"
       }
     },
     "constants": {

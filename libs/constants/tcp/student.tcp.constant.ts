@@ -1,3 +1,0 @@
-export enum STUDENT_TCP {
-  GET_ALL_STUDENTS = 'GET_ALL_STUDENTS',
-}
