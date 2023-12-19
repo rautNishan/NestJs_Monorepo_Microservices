@@ -3,7 +3,8 @@ import {
   MongooseOptionsFactory,
 } from '@nestjs/mongoose';
 import { ConfigService } from '@nestjs/config';
-
+import { Injectable } from '@nestjs/common';
+@Injectable()
 export class DataBaseService implements MongooseOptionsFactory {
   constructor(private readonly configService: ConfigService) {}
 

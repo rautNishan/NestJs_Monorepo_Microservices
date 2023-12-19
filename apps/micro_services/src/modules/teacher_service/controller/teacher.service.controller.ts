@@ -9,5 +9,6 @@ export class TeacherController {
   @MessagePattern({ cmd: TEACHER_TCP.REGISTER_STUDENT })
   registerStudent(data: any) {
     console.log('THis is Student Data: ', data);
+    return this.teacherService.registerStudent(data);
   }
 }
