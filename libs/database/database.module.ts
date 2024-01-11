@@ -1,7 +1,10 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { DataBaseService } from './services/database.service';
 import * as Joi from 'joi';
+import { DataBaseService } from './services/database.service';
+import { MongooseModule } from '@nestjs/mongoose';
+import databaseConfig from 'libs/config/database.config';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -10,9 +13,14 @@ import * as Joi from 'joi';
       validationSchema: Joi.object({
         MONGODB_URI: Joi.string().required(),
       }),
+      load: [databaseConfig],
+    }),
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      useClass: DataBaseService,
     }),
   ],
   providers: [DataBaseService],
-  exports: [DataBaseService],
+  exports: [DataBaseService, MongooseModule],
 })
 export class DatabaseModule {}

@@ -15,8 +15,10 @@ export class TeacherController {
   @Post('/registerStudent')
   async registerStudent(@Body() data: StudentCreateDto) {
     console.log('This is Teacher API');
-    return await firstValueFrom(
+    const result = await firstValueFrom(
       this.client.send({ cmd: TEACHER_TCP.REGISTER_STUDENT }, data),
     );
+    console.log('This is DataL ', result);
+    return result;
   }
 }
