@@ -42,6 +42,7 @@
       "lib/dtos/*": [
         "libs/dtos/src/*"
       ]
+      
     }
   }
 }
