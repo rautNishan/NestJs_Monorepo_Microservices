@@ -6,5 +6,5 @@ export abstract class BaseRepository<Entity> {
     this.repository = repository;
   }
 
-  abstract create(data: any);
+  // abstract create(data: any);
 }

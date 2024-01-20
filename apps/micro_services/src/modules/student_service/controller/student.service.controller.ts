@@ -8,7 +8,7 @@ import { STUDENT_TCP } from 'libs/constants/tcp/student/student.tcp.constant';
 })
 export class StudentController {
   @MessagePattern({ cmd: STUDENT_TCP.LOGIN })
-  login() {
+  async login() {
     return 'login';
   }
 }
