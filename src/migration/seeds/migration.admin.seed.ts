@@ -8,11 +8,15 @@ export class MigrationAdminSeed {
     command: 'seed:admin',
     describe: 'Seed admin user',
   })
-  async seed(): Promise<void> {
+  async seed(): Promise<any> {
     const adminData = {
       username: 'admin',
       password: 'admin',
     };
+    const existingData = await this.adminService.find();
+    if (existingData) {
+      return;
+    }
     await this.adminService.create(adminData);
   }
 }

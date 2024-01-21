@@ -17,4 +17,8 @@ export class AdminRepository extends BaseRepository<AdminEntity> {
     const result = await this.adminModel.create(data);
     console.log('This is Reuslt: ', result);
   }
+  async find() {
+    const result = await this.adminModel.findOne({});
+    return result;
+  }
 }
