@@ -13,12 +13,14 @@ export class AdminRepository extends BaseRepository<AdminEntity> {
     super(adminModel);
   }
   async create(data: any): Promise<any> {
-    console.log('This is Data: ', data);
-    const result = await this.adminModel.create(data);
-    console.log('This is Reuslt: ', result);
+    await this.adminModel.create(data);
   }
-  async find() {
-    const result = await this.adminModel.findOne({});
+  async find(user?: string) {
+    if (!user) {
+      const result = await this.adminModel.find({});
+      return result;
+    }
+    const result = await this.adminModel.findOne({ user: user });
     return result;
   }
 }

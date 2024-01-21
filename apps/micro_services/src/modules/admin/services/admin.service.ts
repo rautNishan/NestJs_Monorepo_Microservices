@@ -10,15 +10,18 @@ export class AdminService {
   async create(data: AdminDto): Promise<any> {
     try {
       data.password = await bcrypt.hash(data.password, 10);
-      const result = await this.adminModule.create(data);
-      console.log('This is Result: ', result);
+      await this.adminModule.create(data);
     } catch (error) {
       console.error('Error creating admin user: ', error);
     }
   }
 
-  async find() {
-    const result = await this.adminModule.find();
+  async find(username?: string) {
+    console.log('This is User: ', username);
+    const result = await this.adminModule.find(username);
     return result;
   }
+  // async login(data: any) {
+
+  // }
 }
