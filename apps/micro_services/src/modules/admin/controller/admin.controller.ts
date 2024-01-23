@@ -21,7 +21,8 @@ export class AdminController {
           message: 'No Admin found',
         });
       }
-      console.log('This is Existing Admin: ', existingAdmin);
+      const result = await this.adminService.login(data, existingAdmin);
+      console.log('This is Result: ', result);
     } catch (error) {
       console.log('This is Error: ', typeof error);
       console.log('This is Error: ', error);

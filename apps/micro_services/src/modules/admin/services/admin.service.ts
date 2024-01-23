@@ -1,11 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { AdminRepository } from '../repository/admin.repository';
-import { AdminDto } from 'libs/dtos/adminDTO/admin.dto';
 import * as bcrypt from 'bcrypt';
+import { AuthenticationService } from 'libs/authentication/services/authentication.service';
+import { AdminDto } from 'libs/dtos/adminDTO/admin.dto';
+import { AdminRepository } from '../repository/admin.repository';
 
 @Injectable()
 export class AdminService {
-  constructor(private readonly adminModule: AdminRepository) {}
+  constructor(
+    private readonly adminModule: AdminRepository,
+    private readonly authService: AuthenticationService,
+  ) {}
 
   async create(data: AdminDto): Promise<any> {
     try {
@@ -21,7 +25,17 @@ export class AdminService {
     const result = await this.adminModule.find(username);
     return result;
   }
-  // async login(data: any) {
 
-  // }
+  async login(data: any, existingAdmin: any): Promise<any> {
+    try {
+      const isAuthenticated = await this.authService.checkAuthentication(
+        data,
+        existingAdmin,
+      );
+      console.log('This is Authenticated: ', isAuthenticated);
+    } catch (error) {
+      console.log('This is Error: ', error);
+      throw error;
+    }
+  }
 }

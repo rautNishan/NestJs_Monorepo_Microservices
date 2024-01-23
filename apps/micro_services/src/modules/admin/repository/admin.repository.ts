@@ -17,10 +17,10 @@ export class AdminRepository extends BaseRepository<AdminEntity> {
   }
   async find(user?: string) {
     if (!user) {
-      const result = await this.adminModel.find({});
+      const result = await this.adminModel.findOne();
       return result;
     }
-    const result = await this.adminModel.findOne({ user: user });
+    const result = await this.adminModel.findOne({ username: user });
     return result;
   }
 }

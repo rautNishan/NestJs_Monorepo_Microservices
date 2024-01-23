@@ -14,6 +14,7 @@ export class MigrationAdminSeed {
       password: 'admin',
     };
     const existingData = await this.adminService.find();
+
     if (existingData) {
       return;
     }

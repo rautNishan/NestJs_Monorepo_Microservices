@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
+import { AuthenticationModule } from 'libs/authentication/authentication.module';
+import { AdminController } from './controller/admin.controller';
 import { AdminRepositoryModule } from './repository/admin.repository.module';
 import { AdminService } from './services/admin.service';
-import { AdminController } from './controller/admin.controller';
 
 @Module({
-  imports: [AdminRepositoryModule],
+  imports: [AdminRepositoryModule, AuthenticationModule],
   controllers: [AdminController],
   providers: [AdminService],
   exports: [AdminService],
