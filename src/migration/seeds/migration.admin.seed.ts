@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Command } from 'nestjs-command';
 import { AdminService } from '../../../apps/micro_services/src/modules/admin/services/admin.service';
+import { APP_USER_ROLES } from 'libs/constants/roles/app.user.roles';
 @Injectable()
 export class MigrationAdminSeed {
   constructor(private readonly adminService: AdminService) {}
@@ -12,6 +13,7 @@ export class MigrationAdminSeed {
     const adminData = {
       username: 'admin',
       password: 'admin',
+      role: APP_USER_ROLES.ADMIN,
     };
     const existingData = await this.adminService.find();
 

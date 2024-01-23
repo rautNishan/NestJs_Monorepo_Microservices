@@ -3,6 +3,7 @@ import { ClientProxy } from '@nestjs/microservices';
 import { ApiTags } from '@nestjs/swagger';
 import { TEACHER_TCP } from 'libs/constants/tcp/teacher/teacher.tcp.constant';
 import { StudentCreateDto } from 'libs/dtos/studentDTO/student.register.dto';
+import { TeacherLoginDto } from 'libs/dtos/teacherDTO/teacher.login.dot';
 import { firstValueFrom } from 'rxjs';
 
 @ApiTags('Teacher')
@@ -14,8 +15,7 @@ export class TeacherController {
   constructor(@Inject('MicroService') private readonly client: ClientProxy) {}
 
   @Post('/login')
-  async login(@Body() data: any) {
-    console.log('This is Incoming Data: ', data);
+  async login(@Body() data: TeacherLoginDto) {
     const result = await firstValueFrom(
       this.client.send({ cmd: TEACHER_TCP.LOGIN }, data),
     );

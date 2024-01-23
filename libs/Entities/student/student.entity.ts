@@ -31,6 +31,9 @@ export class StudentEntity {
     type: String,
   })
   password: string;
+
+  @Prop({ required: true, type: String })
+  role: string;
 }
 
 export const StudentSchema = SchemaFactory.createForClass(StudentEntity);

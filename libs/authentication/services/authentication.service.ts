@@ -21,7 +21,11 @@ export class AuthenticationService {
           message: 'Invalid Credentials',
         });
       }
-      const payload = { username: existingData.username };
+      console.log('This is role: ', existingData.role);
+      const payload = {
+        username: existingData.username,
+        role: existingData.role,
+      };
       const secret = this.config.get<string>('app.secret');
       const token = await this.jwtService.signAsync(payload, { secret });
       return token;

@@ -27,4 +27,13 @@ export class TeacherRepository extends BaseRepository<TeacherEntity> {
   async create(data: any): Promise<any> {
     return await this.teacherModel.create(data);
   }
+
+  async find(email?: string) {
+    try {
+      const existingData = await this.teacherModel.findOne({ email: email });
+      return existingData;
+    } catch (error) {
+      throw error;
+    }
+  }
 }

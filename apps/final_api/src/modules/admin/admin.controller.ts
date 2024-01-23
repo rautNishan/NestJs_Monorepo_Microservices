@@ -1,8 +1,10 @@
-import { Body, Controller, Inject, Post } from '@nestjs/common';
+import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { ApiTags } from '@nestjs/swagger';
+import { UserProtectedGuard } from 'libs/authentication/guard/authentication.guard';
 import { ADMIN_TCP } from 'libs/constants/tcp/admin/admin.tcp.constant';
 import { AdminDto } from 'libs/dtos/adminDTO/admin.dto';
+import { TeacherCreateDto } from 'libs/dtos/teacherDTO/teacher.create.dot';
 import { firstValueFrom } from 'rxjs';
 
 @ApiTags('Admin')
@@ -27,8 +29,19 @@ export class AdminController {
     }
   }
 
+  @UseGuards(UserProtectedGuard)
   @Post('/register-teacher')
-  async registerTeacher(@Body() data: any) {
+  async registerTeacher(@Body() data: TeacherCreateDto) {
     console.log('This is Data : ', data);
+    try {
+      const result = await firstValueFrom(
+        this.client.send({ cmd: ADMIN_TCP.ADMIN_REGISTER_TEACHER }, { data }),
+      );
+      console.log('This is Result: ', result);
+      return result;
+    } catch (error) {
+      console.log('This is Error: ', error);
+      throw error;
+    }
   }
 }

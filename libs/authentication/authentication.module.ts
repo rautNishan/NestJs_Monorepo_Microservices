@@ -4,6 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as Joi from 'joi';
 import APP_CONFIG from 'libs/config/app.config';
 import { AuthenticationService } from './services/authentication.service';
+import { UserProtectedGuard } from './guard/authentication.guard';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -16,7 +17,7 @@ import { AuthenticationService } from './services/authentication.service';
       load: [APP_CONFIG],
     }),
   ],
-  providers: [AuthenticationService, JwtService],
-  exports: [AuthenticationService],
+  providers: [AuthenticationService, JwtService, UserProtectedGuard],
+  exports: [AuthenticationService, JwtService, UserProtectedGuard],
 })
 export class AuthenticationModule {}

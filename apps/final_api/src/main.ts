@@ -1,10 +1,12 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { HttpExceptionFilter } from 'libs/error/filters/httpExceptions.filter';
+import { AppModule } from './app.module';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.useGlobalPipes(new ValidationPipe());
   const docConfig = new DocumentBuilder()
     .setTitle('FYP APIS')
     .setDescription('Here are all the APIS that are used in my FYP project')

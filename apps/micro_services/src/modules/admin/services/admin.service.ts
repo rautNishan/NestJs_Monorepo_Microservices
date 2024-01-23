@@ -21,7 +21,6 @@ export class AdminService {
   }
 
   async find(username?: string) {
-    console.log('This is User: ', username);
     const result = await this.adminModule.find(username);
     return result;
   }
@@ -32,7 +31,7 @@ export class AdminService {
         data,
         existingAdmin,
       );
-      console.log('This is Authenticated: ', isAuthenticated);
+      return isAuthenticated;
     } catch (error) {
       console.log('This is Error: ', error);
       throw error;
