@@ -23,12 +23,12 @@ export function Doc(options?: IDocOptions): MethodDecorator {
     }),
     ApiHeaders([
       {
-        name: 'user-agent',
-        description: 'User agent header',
+        name: 'Project Header',
+        description: 'Project Header',
         required: false,
         schema: {
-          default: 'Admin',
-          example: 'Admin',
+          default: 'Final Year Project API',
+          example: 'Final Year Project API',
           type: 'string',
         },
       },
