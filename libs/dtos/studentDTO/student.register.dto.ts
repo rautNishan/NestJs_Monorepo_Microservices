@@ -33,4 +33,11 @@ export class StudentCreateDto {
     example: '123456',
   })
   password: string;
+
+  @IsNotEmpty()
+  @ApiProperty({
+    description: 'Student role',
+    example: 'STUDENT',
+  })
+  role: string;
 }

@@ -23,12 +23,12 @@ export function Doc(options?: IDocOptions): MethodDecorator {
     }),
     ApiHeaders([
       {
-        name: 'Project Header',
-        description: 'Project Header',
+        name: 'FYP',
+        description: 'Final Year Project',
         required: false,
         schema: {
-          default: 'Final Year Project API',
-          example: 'Final Year Project API',
+          default: 'FYP',
+          example: 'FYP',
           type: 'string',
         },
       },

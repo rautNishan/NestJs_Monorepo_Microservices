@@ -5,22 +5,18 @@ import * as bcrypt from 'bcrypt';
 import { TeacherLoginDto } from 'libs/dtos/teacherDTO/teacher.login.dot';
 import { AuthenticationService } from 'libs/authentication/services/authentication.service';
 import { RpcException } from '@nestjs/microservices';
+import { TeacherCreateDto } from 'libs/dtos/teacherDTO/teacher.create.dot';
 @Injectable()
 export class TeacherService {
   constructor(
     private readonly teacherRepository: TeacherRepository,
     private readonly authenticationService: AuthenticationService,
   ) {}
-  // registerStudent(data: any) {
-  //   console.log('This is Data in Service: ', data);
-  //   return this.teacherRepository.create(data);
-  // }
-  async registerTeacher(data: any) {
+  async registerTeacher(data: TeacherCreateDto) {
     try {
-      console.log('This is Data in Service: ', data);
       data.role = APP_USER_ROLES.TEACHER;
       data.password = await bcrypt.hash(data.password, 10);
-      return this.teacherRepository.create(data);
+      return await this.teacherRepository.create(data);
     } catch (error) {
       throw error;
     }
@@ -28,7 +24,8 @@ export class TeacherService {
 
   async login(data: TeacherLoginDto) {
     try {
-      const result = await this.teacherRepository.find(data.email);
+      const query = { email: data.email };
+      const result = await this.teacherRepository.find(query);
       if (!result) {
         throw new Error('No Teacher Found');
       }
@@ -41,9 +38,13 @@ export class TeacherService {
         });
       }
       return isAuthenticated;
-      return result;
     } catch (error) {
       throw error;
     }
+  }
+
+  async find(query?: Record<string, any>) {
+    const result = await this.teacherRepository.find(query);
+    return result;
   }
 }

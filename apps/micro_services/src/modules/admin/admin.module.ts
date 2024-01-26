@@ -4,9 +4,15 @@ import { AdminController } from './controller/admin.controller';
 import { AdminRepositoryModule } from './repository/admin.repository.module';
 import { AdminService } from './services/admin.service';
 import { TeacherModule } from '../teacher_service/teacher_service.module';
+import { StudentModule } from '../student_service/student_service.module';
 
 @Module({
-  imports: [AdminRepositoryModule, AuthenticationModule, TeacherModule],
+  imports: [
+    AdminRepositoryModule,
+    AuthenticationModule,
+    TeacherModule,
+    StudentModule,
+  ],
   controllers: [AdminController],
   providers: [AdminService],
   exports: [AdminService],

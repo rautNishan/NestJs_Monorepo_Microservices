@@ -20,8 +20,9 @@ export class AdminService {
     }
   }
 
-  async find(username?: string) {
-    const result = await this.adminModule.find(username);
+  async find(query?: Record<string, any>) {
+    console.log('This is Existing Data Field: ', query);
+    const result = await this.adminModule.find(query);
     return result;
   }
 
