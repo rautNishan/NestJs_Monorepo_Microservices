@@ -6,6 +6,7 @@ import { ADMIN_TCP } from 'libs/constants/tcp/admin/admin.tcp.constant';
 import { AdminDto } from 'libs/dtos/adminDTO/admin.dto';
 import { TeacherCreateDto } from 'libs/dtos/teacherDTO/teacher.create.dot';
 import { firstValueFrom } from 'rxjs';
+import { AdminLoginDoc } from './docs/admin.docs';
 
 @ApiTags('Admin')
 @Controller({
@@ -29,18 +30,16 @@ export class AdminController {
     }
   }
 
+  @AdminLoginDoc()
   @UseGuards(UserProtectedGuard)
   @Post('/register-teacher')
   async registerTeacher(@Body() data: TeacherCreateDto) {
-    console.log('This is Data : ', data);
     try {
       const result = await firstValueFrom(
         this.client.send({ cmd: ADMIN_TCP.ADMIN_REGISTER_TEACHER }, { data }),
       );
-      console.log('This is Result: ', result);
       return result;
     } catch (error) {
-      console.log('This is Error: ', error);
       throw error;
     }
   }

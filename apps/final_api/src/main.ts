@@ -11,6 +11,7 @@ async function bootstrap() {
     .setTitle('FYP APIS')
     .setDescription('Here are all the APIS that are used in my FYP project')
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, docConfig);
   app.useGlobalFilters(new HttpExceptionFilter());

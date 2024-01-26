@@ -15,12 +15,11 @@ export class UserProtectedGuard implements CanActivate {
   constructor(
     private jwtService: JwtService,
     private readonly config: ConfigService,
-  ) {
-    console.log('AuthenticationGuard instantiated');
-  }
+  ) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(request);
+    console.log('This is Token: ', token);
     if (!token) {
       console.log('No token found in header');
       throw new HttpException('Unauthorized Access', HttpStatus.UNAUTHORIZED);
@@ -37,7 +36,9 @@ export class UserProtectedGuard implements CanActivate {
       throw new HttpException(error.message, HttpStatus.UNAUTHORIZED);
     }
     const url = request.url;
+    console.log('This is URL: ', url);
     const urlToCheck = url.split('/')[1];
+    console.log('This is URL to Check: ', urlToCheck);
     switch (urlToCheck) {
       case 'admin': {
         if (request['user'].role !== APP_USER_ROLES.ADMIN) {

@@ -19,7 +19,7 @@ export class TeacherController {
     const result = await firstValueFrom(
       this.client.send({ cmd: TEACHER_TCP.LOGIN }, data),
     );
-    console.log('This is Result: ', result);
+    return result;
   }
 
   @Post('/registerStudent')
