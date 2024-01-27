@@ -6,6 +6,12 @@ import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.enableCors({
+    origin: '*', // Allow any origin
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    allowedHeaders: 'Content-Type, Accept',
+    credentials: true,
+  });
   app.useGlobalPipes(new ValidationPipe());
   const docConfig = new DocumentBuilder()
     .setTitle('FYP APIS')

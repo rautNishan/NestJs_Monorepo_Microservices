@@ -3,7 +3,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 @Schema({ collection: 'admin', timestamps: true })
 export class AdminEntity {
   @Prop({ required: true, type: String })
-  username: string;
+  email: string;
   @Prop({ required: true, type: String })
   password: string;
   @Prop({ required: true, type: String })

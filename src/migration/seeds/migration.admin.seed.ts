@@ -11,7 +11,7 @@ export class MigrationAdminSeed {
   })
   async seed(): Promise<any> {
     const adminData = {
-      username: 'admin',
+      email: 'admin@gmail.com',
       password: 'admin',
       role: APP_USER_ROLES.ADMIN,
     };

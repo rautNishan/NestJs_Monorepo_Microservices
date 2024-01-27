@@ -24,6 +24,7 @@ export class AdminController {
   @Post('/login')
   async login(@Body() data: AdminDto) {
     try {
+      console.log('API REQUEST.....');
       const result = await firstValueFrom(
         this.client.send({ cmd: ADMIN_TCP.ADMIN_LOGIN }, { data }),
       );
@@ -55,6 +56,7 @@ export class AdminController {
   @Post('/register-student')
   async registerStudent(@Body() data: StudentCreateDto) {
     try {
+      console.log('API REQUEST.....');
       console.log('This is Data: ', data);
       const result = await firstValueFrom(
         this.client.send({ cmd: ADMIN_TCP.ADMIN_REGISTER_STUDENT }, { data }),
