@@ -21,9 +21,8 @@ export class AuthenticationService {
           message: 'Invalid Credentials',
         });
       }
-      console.log('This is role: ', existingData.role);
       const payload = {
-        username: existingData.username,
+        id: existingData._id.toString(),
         role: existingData.role,
       };
       const secret = this.config.get<string>('app.secret');

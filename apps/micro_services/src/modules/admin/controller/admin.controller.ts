@@ -19,7 +19,7 @@ export class AdminController {
   @MessagePattern({ cmd: ADMIN_TCP.ADMIN_LOGIN })
   async login({ data }) {
     try {
-      const query = { username: data.username };
+      const query = { email: data.email };
       const existingAdmin = await this.adminService.find(query);
       if (!existingAdmin) {
         throw new RpcException({
