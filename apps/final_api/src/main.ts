@@ -1,8 +1,8 @@
+import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { HttpExceptionFilter } from 'libs/error/filters/httpExceptions.filter';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
+import { AllExceptionsFilter } from 'libs/error/filters/httpExceptions.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -20,7 +20,8 @@ async function bootstrap() {
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, docConfig);
-  app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalFilters(new AllExceptionsFilter());
+  // app.useGlobalFilters(new BadRequestExceptionFilter());
   SwaggerModule.setup('api', app, document);
   await app.listen(3000);
 }
