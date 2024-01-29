@@ -24,10 +24,14 @@ export class TeacherService {
 
   async login(data: TeacherLoginDto) {
     try {
+      console.log('This is Service');
       const query = { email: data.email };
       const result = await this.teacherRepository.find(query);
       if (!result) {
-        throw new Error('No Teacher Found');
+        throw new RpcException({
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Teacher not found',
+        });
       }
       const isAuthenticated =
         await this.authenticationService.checkAuthentication(data, result);

@@ -26,7 +26,10 @@ export class AuthenticationService {
         role: existingData.role,
       };
       const secret = this.config.get<string>('app.secret');
-      const token = await this.jwtService.signAsync(payload, { secret });
+      const token = await this.jwtService.signAsync(payload, {
+        secret,
+        expiresIn: '1h',
+      });
       return token;
     } catch (error) {
       throw error;

@@ -27,7 +27,7 @@ export class TeacherController {
       console.log('This is Result in service: ', result);
       return result;
     } catch (error) {
-      console.log('This is Error: ', error);
+      console.log('This is Error in controller: ', error);
       throw error;
     }
   }

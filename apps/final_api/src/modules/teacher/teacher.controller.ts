@@ -16,10 +16,14 @@ export class TeacherController {
 
   @Post('/login')
   async login(@Body() data: TeacherLoginDto) {
-    const result = await firstValueFrom(
-      this.client.send({ cmd: TEACHER_TCP.LOGIN }, data),
-    );
-    return result;
+    try {
+      const result = await firstValueFrom(
+        this.client.send({ cmd: TEACHER_TCP.LOGIN }, data),
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
   }
 
   @Post('/registerStudent')

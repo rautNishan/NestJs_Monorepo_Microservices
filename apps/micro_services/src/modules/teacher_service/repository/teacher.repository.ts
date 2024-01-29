@@ -33,6 +33,7 @@ export class TeacherRepository extends BaseRepository<TeacherEntity> {
       const existingData = await this.teacherModel.findOne(query);
       return existingData;
     } catch (error) {
+      console.log('This is Error in Repository: ', error);
       throw error;
     }
   }
