@@ -4,6 +4,8 @@ import { AuthenticationModule } from 'libs/authentication/authentication.module'
 import { AdminController } from './modules/admin/admin.controller';
 import { StudentController } from './modules/student/student.controller';
 import { TeacherController } from './modules/teacher/teacher.controller';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { ResponseInterceptor } from 'libs/response/interceptors/response.interceptor';
 
 @Module({
   imports: [
@@ -26,6 +28,10 @@ import { TeacherController } from './modules/teacher/teacher.controller';
     //   provide: APP_GUARD,
     //   useClass: AuthenticationGuard,
     // },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ResponseInterceptor,
+    },
   ],
 })
 export class AppModule {}

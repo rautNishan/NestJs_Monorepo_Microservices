@@ -1,10 +1,13 @@
 import { Body, Controller, Get, Inject, Post, UseGuards } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { ApiTags } from '@nestjs/swagger';
+import { instanceToPlain } from 'class-transformer';
 import { UserProtectedGuard } from 'libs/authentication/guard/authentication.guard';
 import { ADMIN_TCP } from 'libs/constants/tcp/admin/admin.tcp.constant';
 import { AdminDto } from 'libs/dtos/adminDTO/admin.dto';
+import { StudentCreateDto } from 'libs/dtos/studentDTO/student.register.dto';
 import { TeacherCreateDto } from 'libs/dtos/teacherDTO/teacher.create.dot';
+import { TeacherResponseSerialization } from 'libs/response/serialization/Teacher/teacher.response.serialization';
 import { firstValueFrom } from 'rxjs';
 import {
   AdminAddCourseDoc,
@@ -12,7 +15,6 @@ import {
   AdminRegisterStudentDoc,
   AdminRegisterTeacherDoc,
 } from './docs/admin.docs';
-import { StudentCreateDto } from 'libs/dtos/studentDTO/student.register.dto';
 
 @ApiTags('Admin')
 @Controller({
@@ -58,7 +60,9 @@ export class AdminController {
       const result = await firstValueFrom(
         this.client.send({ cmd: ADMIN_TCP.ADMIN_REGISTER_STUDENT }, { data }),
       );
-      return result;
+      return result.map((teacher) =>
+        instanceToPlain(new TeacherResponseSerialization(teacher)),
+      );
     } catch (error) {
       throw error;
     }
@@ -81,12 +85,14 @@ export class AdminController {
   @AdminGetAllTeacherDoc()
   @UseGuards(UserProtectedGuard)
   @Get('/get-all-teacher')
-  async getAllTeacher() {
+  async getAllTeacher(): Promise<TeacherResponseSerialization[]> {
     try {
       const result = await firstValueFrom(
         this.client.send({ cmd: ADMIN_TCP.ADMIN_GET_ALL_TEACHER }, {}),
       );
-      return result;
+      return result.map((teacher) =>
+        instanceToPlain(new TeacherResponseSerialization(teacher)),
+      );
     } catch (error) {
       throw error;
     }
