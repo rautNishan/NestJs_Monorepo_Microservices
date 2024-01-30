@@ -27,6 +27,7 @@ export class TeacherService {
       console.log('This is Service');
       const query = { email: data.email };
       const result = await this.teacherRepository.find(query);
+      console.log('This is Result: ', result);
       if (!result) {
         throw new RpcException({
           statusCode: HttpStatus.NOT_FOUND,
@@ -48,7 +49,21 @@ export class TeacherService {
   }
 
   async find(query?: Record<string, any>) {
-    const result = await this.teacherRepository.find(query);
-    return result;
+    try {
+      const result = await this.teacherRepository.find(query);
+      return result;
+    } catch (error) {
+      throw error;
+    }
   }
+
+  // async getAllTeacher() {
+  //   try {
+  //     const result = await this.teacherRepository.find();
+  //     console.log('This is Result: ', result);
+  //     return result;
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
 }

@@ -1,5 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty } from 'class-validator';
+import { IsEmail, IsEnum, IsNotEmpty } from 'class-validator';
+import { COURSES } from 'libs/constants/enums/course.enum';
+import { SECTION } from 'libs/constants/enums/section.enum';
 
 export class StudentCreateDto {
   @ApiProperty({
@@ -10,16 +12,18 @@ export class StudentCreateDto {
   name: string;
   @ApiProperty({
     description: 'Student section',
-    example: 'A',
+    example: 'N5',
   })
   @IsNotEmpty()
-  section: string;
+  @IsEnum(SECTION)
+  section: SECTION;
   @IsNotEmpty()
   @ApiProperty({
     description: 'Student course',
-    example: 'BSCS',
+    example: 'COMPUTING',
   })
-  course: string;
+  @IsEnum(COURSES)
+  course: COURSES;
   @IsNotEmpty()
   @IsEmail()
   @ApiProperty({

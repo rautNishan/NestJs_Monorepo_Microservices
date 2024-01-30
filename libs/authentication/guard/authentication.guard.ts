@@ -32,7 +32,7 @@ export class UserProtectedGuard implements CanActivate {
       request['user'] = payload;
       console.log('This is Request: ', request['user']);
     } catch (error) {
-      console.log('Error verifying token: ', error);
+      console.log('Error verifying token: ', error.message);
       throw new HttpException(error.message, HttpStatus.UNAUTHORIZED);
     }
     const url = request.url;

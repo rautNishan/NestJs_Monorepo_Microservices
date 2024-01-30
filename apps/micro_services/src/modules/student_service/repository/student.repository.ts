@@ -16,11 +16,12 @@ export class StudentRepository extends BaseRepository<StudentEntity> {
     return await this.studentModel.create(data);
   }
   async find(query?: Record<string, any>) {
-    if (!query) {
-      const result = await this.studentModel.findOne();
+    let result;
+    if (query) {
+      result = await this.studentModel.findOne(query);
       return result;
     }
-    const result = await this.studentModel.findOne(query);
+    result = await this.studentModel.find();
     return result;
   }
 }

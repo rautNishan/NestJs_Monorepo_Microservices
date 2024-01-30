@@ -31,3 +31,14 @@ export function AdminAddCourseDoc(): MethodDecorator {
     DocAuth({ jwtAccessToken: true }),
   );
 }
+
+export function AdminGetAllTeacherDoc(): MethodDecorator {
+  return applyDecorators(
+    Doc({
+      summary: 'Admin add Course',
+      description: 'This API is for admin to add Course',
+      operation: 'Admin add Course',
+    }),
+    DocAuth({ jwtAccessToken: true }),
+  );
+}

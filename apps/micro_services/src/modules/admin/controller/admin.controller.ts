@@ -71,4 +71,15 @@ export class AdminController {
       throw error;
     }
   }
+
+  @MessagePattern({ cmd: ADMIN_TCP.ADMIN_GET_ALL_TEACHER })
+  async getAllTeacher() {
+    try {
+      const result = await this.teacherService.find();
+      console.log('This is Result: ', result);
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
 }

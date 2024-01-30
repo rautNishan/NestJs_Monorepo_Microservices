@@ -1,6 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { sectionDataBaseName } from '../section/section.entity';
 
-@Schema({ collection: 'students', timestamps: true })
+export const studentDataBaseName = 'students';
+@Schema({ collection: studentDataBaseName, timestamps: true })
 export class StudentEntity {
   @Prop({
     required: true,
@@ -9,6 +11,7 @@ export class StudentEntity {
   name: string;
 
   @Prop({
+    ref: sectionDataBaseName,
     required: true,
     type: String,
   })

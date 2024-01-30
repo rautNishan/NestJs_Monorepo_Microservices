@@ -17,11 +17,11 @@ export class AdminRepository extends BaseRepository<AdminEntity> {
   }
 
   async find(query?: Record<string, any>) {
-    if (!query) {
-      const result = await this.adminModel.findOne();
+    if (query) {
+      const result = await this.adminModel.findOne(query);
       return result;
     }
-    const result = await this.adminModel.findOne(query);
+    const result = await this.adminModel.find();
     return result;
   }
 }

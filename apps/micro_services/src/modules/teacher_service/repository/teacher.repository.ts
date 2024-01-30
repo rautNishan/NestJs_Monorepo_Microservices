@@ -30,7 +30,12 @@ export class TeacherRepository extends BaseRepository<TeacherEntity> {
 
   async find(query?: Record<string, any>) {
     try {
-      const existingData = await this.teacherModel.findOne(query);
+      let existingData;
+      if (query) {
+        existingData = await this.teacherModel.findOne(query);
+        return existingData;
+      }
+      existingData = await this.teacherModel.find();
       return existingData;
     } catch (error) {
       console.log('This is Error in Repository: ', error);

@@ -1,4 +1,4 @@
-import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Post, UseGuards } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { ApiTags } from '@nestjs/swagger';
 import { UserProtectedGuard } from 'libs/authentication/guard/authentication.guard';
@@ -8,6 +8,7 @@ import { TeacherCreateDto } from 'libs/dtos/teacherDTO/teacher.create.dot';
 import { firstValueFrom } from 'rxjs';
 import {
   AdminAddCourseDoc,
+  AdminGetAllTeacherDoc,
   AdminRegisterStudentDoc,
   AdminRegisterTeacherDoc,
 } from './docs/admin.docs';
@@ -54,8 +55,6 @@ export class AdminController {
   @Post('/register-student')
   async registerStudent(@Body() data: StudentCreateDto) {
     try {
-      console.log('API REQUEST.....');
-      console.log('This is Data: ', data);
       const result = await firstValueFrom(
         this.client.send({ cmd: ADMIN_TCP.ADMIN_REGISTER_STUDENT }, { data }),
       );
@@ -72,6 +71,20 @@ export class AdminController {
     try {
       const result = await firstValueFrom(
         this.client.send({ cmd: ADMIN_TCP.ADMIN_ADD_COURSE }, { data }),
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @AdminGetAllTeacherDoc()
+  @UseGuards(UserProtectedGuard)
+  @Get('/get-all-teacher')
+  async getAllTeacher() {
+    try {
+      const result = await firstValueFrom(
+        this.client.send({ cmd: ADMIN_TCP.ADMIN_GET_ALL_TEACHER }, {}),
       );
       return result;
     } catch (error) {
