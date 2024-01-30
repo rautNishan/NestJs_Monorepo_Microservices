@@ -30,6 +30,8 @@ export class AuthenticationService {
         secret,
         expiresIn: '1h',
       });
+      console.log('This is Token sending to frontend: ', token);
+
       return token;
     } catch (error) {
       throw error;

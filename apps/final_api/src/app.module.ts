@@ -4,6 +4,7 @@ import { AuthenticationModule } from 'libs/authentication/authentication.module'
 import { AdminController } from './modules/admin/admin.controller';
 import { StudentController } from './modules/student/student.controller';
 import { TeacherController } from './modules/teacher/teacher.controller';
+import { AuthenticationController } from './modules/auth/controller/Authentication.controller';
 
 @Module({
   imports: [
@@ -19,7 +20,12 @@ import { TeacherController } from './modules/teacher/teacher.controller';
       },
     ]),
   ],
-  controllers: [StudentController, TeacherController, AdminController],
+  controllers: [
+    StudentController,
+    TeacherController,
+    AdminController,
+    AuthenticationController,
+  ],
   providers: [
     //For Global Guard
     // {

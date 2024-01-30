@@ -38,8 +38,11 @@ $ pnpm install
 # development
 $ pnpm run start
 
-# watch mode
-$ pnpm run start:dev
+# watch mode for apis
+$ pnpm run start:dev 
+
+# watch mode for micro_services (Make sure to run this in next terminal)
+$ nest start micro_services --watch
 
 # production mode
 $ pnpm run start:prod
@@ -57,6 +60,16 @@ $ pnpm run test:e2e
 # test coverage
 $ pnpm run test:cov
 ```
+
+<!-- Make sure to put this in env else program will not run without this -->
+## .env
+```
+# MONGODB_URI=
+# SECRET_KEY=
+
+```
+
+
 
 ## Support
 

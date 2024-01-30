@@ -3,8 +3,8 @@ import { ConfigModule } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as Joi from 'joi';
 import APP_CONFIG from 'libs/config/app.config';
-import { AuthenticationService } from './services/authentication.service';
 import { UserProtectedGuard } from './guard/authentication.guard';
+import { AuthenticationService } from './services/authentication.service';
 @Module({
   imports: [
     ConfigModule.forRoot({
