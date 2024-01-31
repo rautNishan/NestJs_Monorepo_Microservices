@@ -5,6 +5,7 @@ import { AdminRepositoryModule } from './repository/admin.repository.module';
 import { AdminService } from './services/admin.service';
 import { TeacherModule } from '../teacher_service/teacher_service.module';
 import { StudentModule } from '../student_service/student_service.module';
+import { FacultyModule } from '../faculty/faculty.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { StudentModule } from '../student_service/student_service.module';
     AuthenticationModule,
     TeacherModule,
     StudentModule,
+    FacultyModule,
   ],
   controllers: [AdminController],
   providers: [AdminService],

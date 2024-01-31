@@ -21,7 +21,18 @@ export function AdminRegisterStudentDoc(): MethodDecorator {
     DocAuth({ jwtAccessToken: true }),
   );
 }
-export function AdminAddCourseDoc(): MethodDecorator {
+export function AdminAddFacultyDoc(): MethodDecorator {
+  return applyDecorators(
+    Doc({
+      summary: 'Admin add Faculty',
+      description: 'This API is for admin to add Faculty',
+      operation: 'Admin add Course',
+    }),
+    DocAuth({ jwtAccessToken: true }),
+  );
+}
+
+export function AdminGetAllTeacherDoc(): MethodDecorator {
   return applyDecorators(
     Doc({
       summary: 'Admin add Course',
@@ -32,7 +43,7 @@ export function AdminAddCourseDoc(): MethodDecorator {
   );
 }
 
-export function AdminGetAllTeacherDoc(): MethodDecorator {
+export function AdminGetAllFacultyDoc(): MethodDecorator {
   return applyDecorators(
     Doc({
       summary: 'Admin add Course',

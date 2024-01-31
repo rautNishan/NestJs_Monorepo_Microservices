@@ -1,5 +1,6 @@
 import {
   ArgumentsHost,
+  BadRequestException,
   Catch,
   ExceptionFilter,
   HttpException,
@@ -11,15 +12,16 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
     const request = ctx.getRequest();
-    console.log('All Exception Filter....');
-    console.log('This is Exception: ', exception);
     console.log(typeof exception);
 
     //Default values
     let status = 500;
     let message = 'Internal server error';
-
-    if (exception instanceof HttpException) {
+    if (exception instanceof BadRequestException) {
+      status = exception.getStatus();
+      const responseData = exception.getResponse();
+      message = responseData['message'];
+    } else if (exception instanceof HttpException) {
       console.log('This is Http Exception: ', exception);
       status = exception.getStatus();
       message = exception.message;

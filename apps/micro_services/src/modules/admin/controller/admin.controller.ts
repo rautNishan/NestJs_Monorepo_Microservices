@@ -4,6 +4,7 @@ import { ADMIN_TCP } from 'libs/constants/tcp/admin/admin.tcp.constant';
 import { StudentService } from '../../student_service/services/student.service';
 import { TeacherService } from '../../teacher_service/services/teacher.service';
 import { AdminService } from '../services/admin.service';
+import { FacultyService } from '../../faculty/services/faculty.service';
 
 @Controller({
   version: '1',
@@ -14,6 +15,7 @@ export class AdminController {
     private readonly adminService: AdminService,
     private readonly teacherService: TeacherService,
     private readonly studentService: StudentService,
+    private readonly facultyService: FacultyService,
   ) {}
 
   @MessagePattern({ cmd: ADMIN_TCP.ADMIN_LOGIN })
@@ -77,6 +79,35 @@ export class AdminController {
     try {
       const result = await this.teacherService.find();
       console.log('This is Result: ', result);
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @MessagePattern({ cmd: ADMIN_TCP.ADMIN_ADD_FACULTY })
+  async addFaculty({ faculty }) {
+    try {
+      const query = { name: faculty.name };
+      const existingFaculty = await this.facultyService.find(query);
+      if (existingFaculty) {
+        throw new RpcException({
+          statusCode: HttpStatus.CONFLICT,
+          message: 'Faculty already exists',
+        });
+      }
+      const result = await this.facultyService.create(faculty);
+      console.log('This is Result: ', result);
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @MessagePattern({ cmd: ADMIN_TCP.ADMIN_GET_ALL_FACULTY })
+  async getAllFaculty() {
+    try {
+      const result = await this.facultyService.find();
       return result;
     } catch (error) {
       throw error;

@@ -5,12 +5,14 @@ import { instanceToPlain } from 'class-transformer';
 import { UserProtectedGuard } from 'libs/authentication/guard/authentication.guard';
 import { ADMIN_TCP } from 'libs/constants/tcp/admin/admin.tcp.constant';
 import { AdminDto } from 'libs/dtos/adminDTO/admin.dto';
+import { FacultyDto } from 'libs/dtos/facultyDTO/faculty.dto';
 import { StudentCreateDto } from 'libs/dtos/studentDTO/student.register.dto';
 import { TeacherCreateDto } from 'libs/dtos/teacherDTO/teacher.create.dot';
 import { TeacherResponseSerialization } from 'libs/response/serialization/Teacher/teacher.response.serialization';
 import { firstValueFrom } from 'rxjs';
 import {
-  AdminAddCourseDoc,
+  AdminAddFacultyDoc,
+  AdminGetAllFacultyDoc,
   AdminGetAllTeacherDoc,
   AdminRegisterStudentDoc,
   AdminRegisterTeacherDoc,
@@ -68,13 +70,27 @@ export class AdminController {
     }
   }
 
-  @AdminAddCourseDoc()
+  @AdminAddFacultyDoc()
   @UseGuards(UserProtectedGuard)
-  @Post('/add-course')
-  async addCourse(@Body() data: any) {
+  @Post('/add-faculty')
+  async addCourse(@Body() faculty: FacultyDto) {
     try {
       const result = await firstValueFrom(
-        this.client.send({ cmd: ADMIN_TCP.ADMIN_ADD_COURSE }, { data }),
+        this.client.send({ cmd: ADMIN_TCP.ADMIN_ADD_FACULTY }, { faculty }),
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @AdminGetAllFacultyDoc()
+  @UseGuards(UserProtectedGuard)
+  @Get('/get-all-faculty')
+  async getAllFaculty() {
+    try {
+      const result = await firstValueFrom(
+        this.client.send({ cmd: ADMIN_TCP.ADMIN_GET_ALL_FACULTY }, {}),
       );
       return result;
     } catch (error) {

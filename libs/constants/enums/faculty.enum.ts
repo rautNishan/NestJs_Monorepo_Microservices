@@ -1,4 +1,4 @@
-export enum COURSES {
+export enum FACULTY {
   COMPUTING = 'COMPUTING',
   NETWORKING = 'NETWORKING',
   BUSINESS = 'BUSINESS',
