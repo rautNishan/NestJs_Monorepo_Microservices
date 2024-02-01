@@ -19,7 +19,6 @@ export class UserProtectedGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(request);
-    console.log('This is Token: ', token);
     if (!token) {
       console.log('No token found in header');
       throw new HttpException('Unauthorized Access', HttpStatus.UNAUTHORIZED);
@@ -28,17 +27,12 @@ export class UserProtectedGuard implements CanActivate {
       const payload = await this.jwtService.verifyAsync(token, {
         secret: this.config.get<string>('app.secret'),
       });
-      console.log('This is Payload: ', payload);
       request['user'] = payload;
-      console.log('This is Request: ', request['user']);
     } catch (error) {
-      console.log('Error verifying token: ', error.message);
       throw new HttpException(error.message, HttpStatus.UNAUTHORIZED);
     }
     const url = request.url;
-    console.log('This is URL: ', url);
     const urlToCheck = url.split('/')[1];
-    console.log('This is URL to Check: ', urlToCheck);
     switch (urlToCheck) {
       case 'admin': {
         if (request['user'].role !== APP_USER_ROLES.ADMIN) {

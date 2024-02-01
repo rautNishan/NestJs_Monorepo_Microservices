@@ -21,7 +21,6 @@ export class AdminService {
   }
 
   async find(query?: Record<string, any>) {
-    console.log('This is Existing Data Field: ', query);
     const result = await this.adminModule.find(query);
     return result;
   }

@@ -1,5 +1,5 @@
 import { applyDecorators } from '@nestjs/common';
-import { Doc, DocAuth } from 'libs/doc/decorators/doc.decorators';
+import { Doc, DocAuth, DocRequest } from 'libs/doc/decorators/doc.decorators';
 
 export function AdminRegisterTeacherDoc(): MethodDecorator {
   return applyDecorators(
@@ -49,6 +49,39 @@ export function AdminGetAllFacultyDoc(): MethodDecorator {
       summary: 'Admin add Course',
       description: 'This API is for admin to add Course',
       operation: 'Admin add Course',
+    }),
+    DocAuth({ jwtAccessToken: true }),
+  );
+}
+
+export function AdminEditFacultyDoc(): MethodDecorator {
+  return applyDecorators(
+    Doc({
+      summary: 'Admin Edit Faculty',
+      description: 'This API is for admin to Edit Faculty',
+      operation: 'Admin Edit Faculty',
+    }),
+    DocAuth({ jwtAccessToken: true }),
+  );
+}
+
+export function AdminDeleteByIDFacultyDoc(): MethodDecorator {
+  return applyDecorators(
+    Doc({
+      summary: 'Admin Edit Faculty',
+      description: 'This API is for admin to Edit Faculty',
+      operation: 'Admin Edit Faculty',
+    }),
+    DocRequest({
+      params: [
+        {
+          name: 'id',
+          required: true,
+          description: 'The ID of the faculty',
+          example: '60e0a6e1e9d5f7c1b8e5d7a4',
+          type: String,
+        },
+      ],
     }),
     DocAuth({ jwtAccessToken: true }),
   );

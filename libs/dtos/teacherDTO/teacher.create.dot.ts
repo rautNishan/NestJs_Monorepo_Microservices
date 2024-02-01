@@ -1,4 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsEmail, IsEnum } from 'class-validator';
+import { FACULTY } from 'libs/constants/enums/faculty.enum';
 
 export class TeacherCreateDto {
   @ApiProperty({
@@ -8,13 +10,16 @@ export class TeacherCreateDto {
     description: 'Name of the Teacher',
   })
   name: string;
+
   @ApiProperty({
     required: true,
     type: String,
     example: 'donnishan0@gmail.com',
     description: 'Email of the Teacher',
   })
+  @IsEmail()
   email: string;
+
   @ApiProperty({
     required: true,
     type: String,
@@ -22,6 +27,15 @@ export class TeacherCreateDto {
     description: 'Password of the Teacher',
   })
   password: string;
+
+  @ApiProperty({
+    required: true,
+    type: String,
+    example: 'COMPUTING',
+    description: 'Faculty of the Teacher',
+  })
+  @IsEnum(FACULTY)
+  faculty: string;
   //   @ApiProperty({
   //     required: false,
   //     type: String,

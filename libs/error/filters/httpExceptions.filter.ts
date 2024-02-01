@@ -12,19 +12,24 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
     const request = ctx.getRequest();
-    console.log(typeof exception);
 
     //Default values
     let status = 500;
     let message = 'Internal server error';
     if (exception instanceof BadRequestException) {
+      console.log('This is BadReq: ', exception);
+
       status = exception.getStatus();
       const responseData = exception.getResponse();
       message = responseData['message'];
+      if (message.length == 1) {
+        message = message[0];
+        message = message.toUpperCase();
+      }
     } else if (exception instanceof HttpException) {
-      console.log('This is Http Exception: ', exception);
       status = exception.getStatus();
       message = exception.message;
+      message = message.toUpperCase();
     } else if (typeof exception === 'object' && exception !== null) {
       status = (exception as { statusCode: number }).statusCode || 500;
       message =

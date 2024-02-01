@@ -20,4 +20,24 @@ export class FacultyService {
       throw error;
     }
   }
+
+  async update(existingData, data) {
+    try {
+      if (data.hasOwnProperty('name')) {
+        existingData.name = data.name;
+      }
+      const result = await this.facultyRepository.update(existingData);
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+  async delete(id: string) {
+    try {
+      const result = await this.facultyRepository.delete(id);
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
 }

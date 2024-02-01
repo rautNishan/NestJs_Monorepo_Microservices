@@ -1,10 +1,10 @@
 import { Controller, HttpStatus } from '@nestjs/common';
 import { MessagePattern, RpcException } from '@nestjs/microservices';
 import { ADMIN_TCP } from 'libs/constants/tcp/admin/admin.tcp.constant';
+import { FacultyService } from '../../faculty/services/faculty.service';
 import { StudentService } from '../../student_service/services/student.service';
 import { TeacherService } from '../../teacher_service/services/teacher.service';
 import { AdminService } from '../services/admin.service';
-import { FacultyService } from '../../faculty/services/faculty.service';
 
 @Controller({
   version: '1',
@@ -41,7 +41,6 @@ export class AdminController {
     try {
       const query = { email: data.email };
       const existingTeacher = await this.teacherService.find(query);
-      console.log('This is Existing Teacher: ', existingTeacher);
       if (existingTeacher) {
         throw new RpcException({
           statusCode: HttpStatus.CONFLICT,
@@ -78,7 +77,6 @@ export class AdminController {
   async getAllTeacher() {
     try {
       const result = await this.teacherService.find();
-      console.log('This is Result: ', result);
       return result;
     } catch (error) {
       throw error;
@@ -98,6 +96,7 @@ export class AdminController {
       }
       const result = await this.facultyService.create(faculty);
       console.log('This is Result: ', result);
+      result.message = 'Faculty Added Successfully';
       return result;
     } catch (error) {
       throw error;
@@ -112,5 +111,37 @@ export class AdminController {
     } catch (error) {
       throw error;
     }
+  }
+  @MessagePattern({ cmd: ADMIN_TCP.ADMIN_EDIT_FACULTY })
+  async editFaculty({ data }) {
+    try {
+      const query = { _id: data.id };
+      const existingFaculty = await this.facultyService.find(query);
+      if (!existingFaculty) {
+        throw new RpcException({
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Faculty not found',
+        });
+      }
+      const result = await this.facultyService.update(existingFaculty, data);
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @MessagePattern({ cmd: ADMIN_TCP.ADMIN_DELETE_FACULTY_BY_ID })
+  async deleteFaculty({ id }) {
+    const query = { _id: id };
+    const existingFaculty = await this.facultyService.find(query);
+    if (!existingFaculty) {
+      throw new RpcException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: 'Faculty not found',
+      });
+    }
+    const result = await this.facultyService.delete(existingFaculty);
+    result.message = 'Faculty Deleted Successfully';
+    return result;
   }
 }

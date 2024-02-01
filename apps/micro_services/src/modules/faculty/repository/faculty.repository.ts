@@ -30,4 +30,21 @@ export class FacultyRepository extends BaseRepository<FacultyEntity> {
       throw error;
     }
   }
+
+  async update(data: any): Promise<any> {
+    const result = await this.facultyModel.updateOne(data);
+    console.log('This is Result: ', result);
+    return result;
+  }
+
+  async delete(id: string): Promise<any> {
+    try {
+      const result = await this.facultyModel.deleteOne({ _id: id });
+      console.log('This is Result: ', result);
+      return result;
+    } catch (error) {
+      console.log('This is Error in Repository: ', error);
+      throw error;
+    }
+  }
 }

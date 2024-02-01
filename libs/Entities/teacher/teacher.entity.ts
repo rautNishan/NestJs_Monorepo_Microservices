@@ -19,6 +19,11 @@ export class TeacherEntity {
     type: String,
   })
   password: string;
+  @Prop({
+    required: true,
+    type: String,
+  })
+  faculty: string;
 
   @Prop({ required: true, type: String })
   role: string;
