@@ -5,7 +5,6 @@ import { FacultyService } from '../../faculty/services/faculty.service';
 import { StudentService } from '../../student_service/services/student.service';
 import { TeacherService } from '../../teacher_service/services/teacher.service';
 import { AdminService } from '../services/admin.service';
-
 @Controller({
   version: '1',
   path: 'admin',
@@ -47,7 +46,25 @@ export class AdminController {
           message: 'Teacher already exists',
         });
       }
+      const existingFaculty = await this.facultyService.find({
+        name: data.faculty,
+      });
+      if (!existingFaculty) {
+        throw new RpcException({
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Faculty not found',
+        });
+      }
+      console.log('This is Existing Faculty: ', existingFaculty);
+      existingFaculty.teacherCounts += 1; //For each new teacher added, teacherCounts will be increased by 1
       const result = await this.teacherService.registerTeacher(data);
+      if (!result) {
+        throw new RpcException({
+          statusCode: HttpStatus.BAD_REQUEST,
+          message: 'Teacher not registered',
+        });
+      }
+      await this.facultyService.update(existingFaculty);
       return result;
     } catch (error) {
       throw error;
@@ -59,7 +76,6 @@ export class AdminController {
     try {
       const query = { email: data.email };
       const existingStudent = await this.studentService.find(query);
-      console.log('This is Existing Student: ', existingStudent);
       if (existingStudent) {
         throw new RpcException({
           statusCode: HttpStatus.CONFLICT,
@@ -95,7 +111,6 @@ export class AdminController {
         });
       }
       const result = await this.facultyService.create(faculty);
-      console.log('This is Result: ', result);
       result.message = 'Faculty Added Successfully';
       return result;
     } catch (error) {
@@ -141,6 +156,53 @@ export class AdminController {
       });
     }
     const result = await this.facultyService.delete(existingFaculty);
+    result.message = 'Faculty Deleted Successfully';
+    return result;
+  }
+
+  @MessagePattern({ cmd: ADMIN_TCP.ADMIN_UPDATE_TEACHER_BY_ID })
+  async updateTeacherById({ id, data }) {
+    try {
+      const query = { _id: id };
+      const existingData = await this.teacherService.find(query);
+      if (!existingData) {
+        throw new RpcException({
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Teacher not found',
+        });
+      }
+      const result = await this.teacherService.updateTeacherById(
+        existingData,
+        data,
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @MessagePattern({ cmd: ADMIN_TCP.ADMIN_DELETE_TEACHER_BY_ID })
+  async deleteTeacher({ id }) {
+    const query = { _id: id };
+    const existingTeacher = await this.teacherService.find(query);
+    if (!existingTeacher) {
+      throw new RpcException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: 'Faculty not found',
+      });
+    }
+    const existingFaculty = await this.facultyService.find({
+      name: existingTeacher.faculty,
+    });
+    if (!existingFaculty) {
+      throw new RpcException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: 'Faculty not found',
+      });
+    }
+    existingFaculty.teacherCounts -= 1;
+    const result = await this.teacherService.delete(existingTeacher);
+    await this.facultyService.update(existingFaculty);
     result.message = 'Faculty Deleted Successfully';
     return result;
   }

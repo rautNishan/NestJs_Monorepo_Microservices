@@ -25,7 +25,7 @@ export class TeacherRepository extends BaseRepository<TeacherEntity> {
   }
 
   async create(data: any): Promise<any> {
-    return await this.teacherModel.create(data);
+    return this.teacherModel.create(data);
   }
 
   async find(query?: Record<string, any>) {
@@ -33,10 +33,32 @@ export class TeacherRepository extends BaseRepository<TeacherEntity> {
       let existingData;
       if (query) {
         existingData = await this.teacherModel.findOne(query);
-        return existingData;
+      } else {
+        existingData = await this.teacherModel.find();
       }
-      existingData = await this.teacherModel.find();
       return existingData;
+    } catch (error) {
+      console.log('This is Error in Repository: ', error);
+      throw error;
+    }
+  }
+
+  async update(data: any) {
+    try {
+      const result = await this.teacherModel.findOneAndUpdate(
+        { _id: data._id },
+        data,
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async delete(id: string): Promise<any> {
+    try {
+      const result = await this.teacherModel.deleteOne({ _id: id });
+      return result;
     } catch (error) {
       console.log('This is Error in Repository: ', error);
       throw error;

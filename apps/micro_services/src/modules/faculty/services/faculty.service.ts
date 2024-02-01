@@ -12,19 +12,21 @@ export class FacultyService {
     }
   }
 
-  async find(query?: Record<string, any>) {
+  async find(query?: Record<string, any>, options?: any) {
     try {
-      const result = await this.facultyRepository.find(query);
+      const result = await this.facultyRepository.find(query, options);
       return result;
     } catch (error) {
       throw error;
     }
   }
 
-  async update(existingData, data) {
+  async update(existingData, data?) {
     try {
-      if (data.hasOwnProperty('name')) {
-        existingData.name = data.name;
+      if (data) {
+        if (data.hasOwnProperty('name')) {
+          existingData.name = data.name;
+        }
       }
       const result = await this.facultyRepository.update(existingData);
       return result;

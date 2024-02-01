@@ -16,14 +16,14 @@ export class FacultyRepository extends BaseRepository<FacultyEntity> {
   create(data: any): Promise<any> {
     return this.facultyModel.create(data);
   }
-  async find(query?: Record<string, any>) {
+  async find(query?: Record<string, any>, options?: any) {
     try {
       let existingData;
       if (query) {
-        existingData = await this.facultyModel.findOne(query);
+        existingData = await this.facultyModel.findOne(query, options);
         return existingData;
       }
-      existingData = await this.facultyModel.find();
+      existingData = await this.facultyModel.find(options);
       return existingData;
     } catch (error) {
       console.log('This is Error in Repository: ', error);
@@ -32,15 +32,17 @@ export class FacultyRepository extends BaseRepository<FacultyEntity> {
   }
 
   async update(data: any): Promise<any> {
-    const result = await this.facultyModel.updateOne(data);
-    console.log('This is Result: ', result);
+    const { _id, ...updateData } = data;
+    const result = await this.facultyModel.findOneAndUpdate(
+      { _id: _id },
+      updateData,
+    );
     return result;
   }
 
   async delete(id: string): Promise<any> {
     try {
       const result = await this.facultyModel.deleteOne({ _id: id });
-      console.log('This is Result: ', result);
       return result;
     } catch (error) {
       console.log('This is Error in Repository: ', error);

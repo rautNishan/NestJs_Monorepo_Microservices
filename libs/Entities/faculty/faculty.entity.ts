@@ -5,6 +5,12 @@ const facultyDataBaseName = 'faculty';
 export class FacultyEntity {
   @Prop({ required: true, type: String })
   name: string;
+
+  @Prop({ required: true, type: Number, default: 0 })
+  studentCounts: number;
+
+  @Prop({ required: true, type: Number, default: 0 })
+  teacherCounts: number;
 }
 
 export const FacultySchema = SchemaFactory.createForClass(FacultyEntity);

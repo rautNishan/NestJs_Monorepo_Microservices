@@ -1,8 +1,8 @@
 import { Controller } from '@nestjs/common';
-import { TeacherService } from '../services/teacher.service';
 import { MessagePattern } from '@nestjs/microservices';
 import { TEACHER_TCP } from 'libs/constants/tcp/teacher/teacher.tcp.constant';
 import { TeacherLoginDto } from 'libs/dtos/teacherDTO/teacher.login.dot';
+import { TeacherService } from '../services/teacher.service';
 
 @Controller({})
 export class TeacherController {

@@ -86,3 +86,47 @@ export function AdminDeleteByIDFacultyDoc(): MethodDecorator {
     DocAuth({ jwtAccessToken: true }),
   );
 }
+
+export function AdminUpdateByIDTeacherDoc(): MethodDecorator {
+  return applyDecorators(
+    Doc({
+      summary: 'Admin Edit Teacher',
+      description: 'This API is for admin to Edit Teacher',
+      operation: 'Admin Edit Teacher',
+    }),
+    DocRequest({
+      params: [
+        {
+          name: 'id',
+          required: true,
+          description: 'The ID of the Teacher',
+          example: '60e0a6e1e9d5f7c1b8e5d7a4',
+          type: String,
+        },
+      ],
+    }),
+    DocAuth({ jwtAccessToken: true }),
+  );
+}
+
+export function AdminDeleteByIDTeacherDoc(): MethodDecorator {
+  return applyDecorators(
+    Doc({
+      summary: 'Admin Edit Teacher',
+      description: 'This API is for admin to Edit Teacher',
+      operation: 'Admin Edit Teacher',
+    }),
+    DocRequest({
+      params: [
+        {
+          name: 'id',
+          required: true,
+          description: 'The ID of the Teacher',
+          example: '60e0a6e1e9d5f7c1b8e5d7a4',
+          type: String,
+        },
+      ],
+    }),
+    DocAuth({ jwtAccessToken: true }),
+  );
+}

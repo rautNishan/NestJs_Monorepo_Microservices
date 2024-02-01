@@ -24,12 +24,15 @@ import { firstValueFrom } from 'rxjs';
 import {
   AdminAddFacultyDoc,
   AdminDeleteByIDFacultyDoc,
+  AdminDeleteByIDTeacherDoc,
   AdminEditFacultyDoc,
   AdminGetAllFacultyDoc,
   AdminGetAllTeacherDoc,
   AdminRegisterStudentDoc,
   AdminRegisterTeacherDoc,
+  AdminUpdateByIDTeacherDoc,
 } from './docs/admin.docs';
+import { TeacherUpdateDto } from 'libs/dtos/teacherDTO/teacher.update.dto';
 
 @ApiTags('Admin')
 @Controller({
@@ -130,7 +133,6 @@ export class AdminController {
   @UseGuards(UserProtectedGuard)
   @Patch('/edit-faculty')
   async editFaculty(@Body() data: FacultyEditDto) {
-    console.log('This is Data after edit button is clicked: ', data);
     try {
       const result = await firstValueFrom(
         this.client.send({ cmd: ADMIN_TCP.ADMIN_EDIT_FACULTY }, { data }),
@@ -146,9 +148,38 @@ export class AdminController {
   @Delete('/delete-faculty/:id')
   async deleteFaculty(@Param('id') id: string) {
     try {
-      console.log('This is Id: ', id);
       const result = await firstValueFrom(
         this.client.send({ cmd: ADMIN_TCP.ADMIN_DELETE_FACULTY_BY_ID }, { id }),
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @AdminUpdateByIDTeacherDoc()
+  @UseGuards(UserProtectedGuard)
+  @Patch('/update-teacher/:id')
+  async editTeacherDataById(@Param('id') id, @Body() data: TeacherUpdateDto) {
+    try {
+      const result = await firstValueFrom(
+        this.client.send(
+          { cmd: ADMIN_TCP.ADMIN_UPDATE_TEACHER_BY_ID },
+          { id, data },
+        ),
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+  @AdminDeleteByIDTeacherDoc()
+  @UseGuards(UserProtectedGuard)
+  @Delete('/delete-teacher/:id')
+  async deleteTeacher(@Param('id') id: string) {
+    try {
+      const result = await firstValueFrom(
+        this.client.send({ cmd: ADMIN_TCP.ADMIN_DELETE_TEACHER_BY_ID }, { id }),
       );
       return result;
     } catch (error) {

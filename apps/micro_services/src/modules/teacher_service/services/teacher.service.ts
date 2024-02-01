@@ -64,4 +64,35 @@ export class TeacherService {
   //     throw error;
   //   }
   // }
+
+  async updateTeacherById(existingData, dataToUpdate) {
+    try {
+      if (dataToUpdate.hasOwnProperty('password')) {
+        dataToUpdate.password = await bcrypt.hash(dataToUpdate.password, 10);
+        existingData.password = dataToUpdate.password;
+      }
+      if (dataToUpdate.hasOwnProperty('email')) {
+        existingData.email = dataToUpdate.email;
+      }
+      if (dataToUpdate.hasOwnProperty('name')) {
+        existingData.name = dataToUpdate.name;
+      }
+      if (dataToUpdate.hasOwnProperty('faculty')) {
+        existingData.faculty = dataToUpdate.faculty;
+      }
+      const result = await this.teacherRepository.update(existingData);
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async delete(id: string) {
+    try {
+      const result = await this.teacherRepository.delete(id);
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
