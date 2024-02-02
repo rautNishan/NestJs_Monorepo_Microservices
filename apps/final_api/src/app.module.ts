@@ -1,15 +1,18 @@
 import { Module } from '@nestjs/common';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { AuthenticationModule } from 'libs/authentication/authentication.module';
+import { PaginationModule } from 'libs/pagination/pagination.module';
+import { ResponseInterceptor } from 'libs/response/interceptors/response.interceptor';
 import { AdminController } from './modules/admin/admin.controller';
 import { StudentController } from './modules/student/student.controller';
 import { TeacherController } from './modules/teacher/teacher.controller';
-import { APP_INTERCEPTOR } from '@nestjs/core';
-import { ResponseInterceptor } from 'libs/response/interceptors/response.interceptor';
 
 @Module({
   imports: [
     AuthenticationModule,
+    PaginationModule,
+    // HelperModule,
     ClientsModule.register([
       {
         name: 'MicroService',

@@ -1,6 +1,34 @@
 import { applyDecorators } from '@nestjs/common';
 import { Doc, DocAuth, DocRequest } from 'libs/doc/decorators/doc.decorators';
 
+export function AdminGetAllListTeacherDoc(): MethodDecorator {
+  return applyDecorators(
+    Doc({
+      summary: 'Admin Register Teacher',
+      description: 'This API is for admin to Register Teacher',
+      operation: 'Admin Register Teacher',
+    }),
+    DocRequest({
+      query: [
+        {
+          name: 'page',
+          required: true,
+          description: 'The page number',
+          example: 1,
+          type: Number,
+        },
+        {
+          name: '_search',
+          required: true,
+          description: 'Search value',
+          example: 'name',
+          type: String,
+        },
+      ],
+    }),
+    DocAuth({ jwtAccessToken: true }),
+  );
+}
 export function AdminRegisterTeacherDoc(): MethodDecorator {
   return applyDecorators(
     Doc({

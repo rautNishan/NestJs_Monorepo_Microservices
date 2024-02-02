@@ -68,8 +68,10 @@ export class TeacherService {
   async updateTeacherById(existingData, dataToUpdate) {
     try {
       if (dataToUpdate.hasOwnProperty('password')) {
-        dataToUpdate.password = await bcrypt.hash(dataToUpdate.password, 10);
-        existingData.password = dataToUpdate.password;
+        if (dataToUpdate.password != '') {
+          dataToUpdate.password = await bcrypt.hash(dataToUpdate.password, 10);
+          existingData.password = dataToUpdate.password;
+        }
       }
       if (dataToUpdate.hasOwnProperty('email')) {
         existingData.email = dataToUpdate.email;

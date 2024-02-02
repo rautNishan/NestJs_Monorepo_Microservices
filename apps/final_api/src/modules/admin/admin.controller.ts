@@ -27,12 +27,19 @@ import {
   AdminDeleteByIDTeacherDoc,
   AdminEditFacultyDoc,
   AdminGetAllFacultyDoc,
+  AdminGetAllListTeacherDoc,
   AdminGetAllTeacherDoc,
   AdminRegisterStudentDoc,
   AdminRegisterTeacherDoc,
   AdminUpdateByIDTeacherDoc,
 } from './docs/admin.docs';
 import { TeacherUpdateDto } from 'libs/dtos/teacherDTO/teacher.update.dto';
+import { PaginationQuery } from 'libs/pagination/decorators/pagination.decorator';
+import {
+  AVAILABLE_SEARCH,
+  PAGINATION_PER_PAGE,
+} from 'libs/pagination/constants/pagination.constant';
+import { PaginationDto } from 'libs/pagination/dto/pagination.dto';
 
 @ApiTags('Admin')
 @Controller({
@@ -42,6 +49,16 @@ import { TeacherUpdateDto } from 'libs/dtos/teacherDTO/teacher.update.dto';
 export class AdminController {
   constructor(@Inject('MicroService') private readonly client: ClientProxy) {}
 
+  @AdminGetAllListTeacherDoc()
+  @UseGuards(UserProtectedGuard)
+  @Get('teacher-list')
+  async getAllTeacherList(
+    @PaginationQuery(PAGINATION_PER_PAGE, AVAILABLE_SEARCH)
+    pagination: PaginationDto,
+  ) {
+    console.log('This is Pagination ._search: ', pagination._search);
+    console.log('This is Pagination: ', pagination);
+  }
   @Post('/login')
   async login(@Body() data: AdminDto) {
     try {
