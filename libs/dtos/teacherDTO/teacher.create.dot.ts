@@ -6,6 +6,14 @@ export class TeacherCreateDto {
   @ApiProperty({
     required: true,
     type: String,
+    example: '001',
+    description: 'College ID of the Teacher',
+  })
+  college_id: string;
+
+  @ApiProperty({
+    required: true,
+    type: String,
     example: 'Nishan Raut',
     description: 'Name of the Teacher',
   })

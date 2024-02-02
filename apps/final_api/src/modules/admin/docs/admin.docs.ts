@@ -9,17 +9,10 @@ export function AdminGetAllListTeacherDoc(): MethodDecorator {
       operation: 'Admin Register Teacher',
     }),
     DocRequest({
-      query: [
+      queries: [
         {
-          name: 'page',
-          required: true,
-          description: 'The page number',
-          example: 1,
-          type: Number,
-        },
-        {
-          name: '_search',
-          required: true,
+          name: 'search_key',
+          required: false,
           description: 'Search value',
           example: 'name',
           type: String,

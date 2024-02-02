@@ -1,6 +1,6 @@
 import { Inject, Injectable, PipeTransform, Scope, Type } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
-import { HelperNumberService } from 'libs/helper/helper.number.service';
+import { HelperNumberService } from 'libs/helper/services/helper.number.service';
 import { IRequestApp } from 'libs/request/interface/request.interface';
 import { PaginationService } from '../service/pagination.service';
 

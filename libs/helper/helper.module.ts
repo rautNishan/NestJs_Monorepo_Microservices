@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
-import { HelperNumberService } from './helper.number.service';
+import { HelperNumberService } from './services/helper.number.service';
+import { HelperStringService } from './services/helper.string.service';
+import { HelperObjectService } from './services/helper.object.service';
 
 @Module({
-  providers: [HelperNumberService],
-  exports: [HelperNumberService],
+  providers: [HelperNumberService, HelperStringService, HelperObjectService],
+  exports: [HelperNumberService, HelperStringService, HelperObjectService],
 })
 export class HelperModule {}

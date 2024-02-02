@@ -28,14 +28,10 @@ export class TeacherRepository extends BaseRepository<TeacherEntity> {
     return this.teacherModel.create(data);
   }
 
-  async find(query?: Record<string, any>) {
+  async findOne(query?: Record<string, any>) {
     try {
-      let existingData;
-      if (query) {
-        existingData = await this.teacherModel.findOne(query);
-      } else {
-        existingData = await this.teacherModel.find();
-      }
+      console.log('This is Query by id: ', query);
+      const existingData = await this.teacherModel.findOne(query);
       return existingData;
     } catch (error) {
       console.log('This is Error in Repository: ', error);
@@ -43,6 +39,15 @@ export class TeacherRepository extends BaseRepository<TeacherEntity> {
     }
   }
 
+  async findAll(query?: Record<string, any>) {
+    try {
+      const existingData = await this.teacherModel.find(query).limit(5);
+      return existingData;
+    } catch (error) {
+      console.log('This is Error in Repository: ', error);
+      throw error;
+    }
+  }
   async update(data: any) {
     try {
       const result = await this.teacherModel.findOneAndUpdate(

@@ -1,4 +1,4 @@
-import { ApiParamOptions } from '@nestjs/swagger';
+import { ApiParamOptions, ApiQueryOptions } from '@nestjs/swagger';
 
 export interface IDocOptions {
   summary?: string;
@@ -9,7 +9,7 @@ export interface IDocOptions {
 
 export interface IDocRequestOptions {
   params?: ApiParamOptions[];
-  query?: ApiParamOptions[];
+  queries?: ApiQueryOptions[];
 }
 
 export interface IDocAuthOptions {

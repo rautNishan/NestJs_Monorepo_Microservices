@@ -9,6 +9,7 @@ import {
   ApiHeaders,
   ApiOperation,
   ApiParam,
+  ApiQuery,
 } from '@nestjs/swagger';
 
 // Doc
@@ -64,11 +65,11 @@ export function DocRequest(options?: IDocRequestOptions) {
     });
     docs.push(...params);
   }
-  if (options?.query) {
-    const query: MethodDecorator[] = options.query.map((query) => {
-      return ApiParam(query);
-    });
-    docs.push(...query);
+  if (options?.queries) {
+    const queries: MethodDecorator[] = options?.queries?.map((query) =>
+      ApiQuery(query),
+    );
+    docs.push(...queries);
   }
   return applyDecorators(...docs);
 }

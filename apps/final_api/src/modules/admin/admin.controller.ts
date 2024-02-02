@@ -7,6 +7,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
@@ -19,6 +20,7 @@ import { FacultyDto } from 'libs/dtos/facultyDTO/faculty.dto';
 import { FacultyEditDto } from 'libs/dtos/facultyDTO/faculty.edit.dto';
 import { StudentCreateDto } from 'libs/dtos/studentDTO/student.register.dto';
 import { TeacherCreateDto } from 'libs/dtos/teacherDTO/teacher.create.dot';
+import { TeacherUpdateDto } from 'libs/dtos/teacherDTO/teacher.update.dto';
 import { TeacherResponseSerialization } from 'libs/response/serialization/Teacher/teacher.response.serialization';
 import { firstValueFrom } from 'rxjs';
 import {
@@ -28,18 +30,10 @@ import {
   AdminEditFacultyDoc,
   AdminGetAllFacultyDoc,
   AdminGetAllListTeacherDoc,
-  AdminGetAllTeacherDoc,
   AdminRegisterStudentDoc,
   AdminRegisterTeacherDoc,
   AdminUpdateByIDTeacherDoc,
 } from './docs/admin.docs';
-import { TeacherUpdateDto } from 'libs/dtos/teacherDTO/teacher.update.dto';
-import { PaginationQuery } from 'libs/pagination/decorators/pagination.decorator';
-import {
-  AVAILABLE_SEARCH,
-  PAGINATION_PER_PAGE,
-} from 'libs/pagination/constants/pagination.constant';
-import { PaginationDto } from 'libs/pagination/dto/pagination.dto';
 
 @ApiTags('Admin')
 @Controller({
@@ -49,16 +43,16 @@ import { PaginationDto } from 'libs/pagination/dto/pagination.dto';
 export class AdminController {
   constructor(@Inject('MicroService') private readonly client: ClientProxy) {}
 
-  @AdminGetAllListTeacherDoc()
-  @UseGuards(UserProtectedGuard)
-  @Get('teacher-list')
-  async getAllTeacherList(
-    @PaginationQuery(PAGINATION_PER_PAGE, AVAILABLE_SEARCH)
-    pagination: PaginationDto,
-  ) {
-    console.log('This is Pagination ._search: ', pagination._search);
-    console.log('This is Pagination: ', pagination);
-  }
+  // @AdminGetAllListTeacherDoc()
+  // @UseGuards(UserProtectedGuard)
+  // @Get('teacher-list')
+  // async getAllTeacherList(
+  //   @PaginationQuery(PAGINATION_PER_PAGE, AVAILABLE_SEARCH)
+  //   pagination: PaginationDto,
+  //   // @Query('_search') _search: string,
+  // ) {
+  //   console.log('This is Search  ', pagination);
+  // }
   @Post('/login')
   async login(@Body() data: AdminDto) {
     try {
@@ -130,14 +124,24 @@ export class AdminController {
     }
   }
 
-  @AdminGetAllTeacherDoc()
+  // @AdminGetAllTeacherDoc()
+  @AdminGetAllListTeacherDoc()
   @UseGuards(UserProtectedGuard)
   @Get('/get-all-teacher')
-  async getAllTeacher(): Promise<TeacherResponseSerialization[]> {
+  async getAllTeacher(
+    @Query('search_key') search_key: string,
+  ): Promise<TeacherResponseSerialization[]> {
     try {
+      console.log('This is Search Key: ', search_key);
+
       const result = await firstValueFrom(
-        this.client.send({ cmd: ADMIN_TCP.ADMIN_GET_ALL_TEACHER }, {}),
+        this.client.send(
+          { cmd: ADMIN_TCP.ADMIN_GET_ALL_TEACHER },
+          { search_key },
+        ),
       );
+      console.log('Before Sending: ', result);
+      //Serializing and sending back response
       return result.map((teacher) =>
         instanceToPlain(new TeacherResponseSerialization(teacher)),
       );

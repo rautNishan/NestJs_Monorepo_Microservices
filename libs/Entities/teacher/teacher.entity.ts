@@ -12,6 +12,12 @@ export class TeacherEntity {
     required: true,
     type: String,
   })
+  college_id: string;
+
+  @Prop({
+    required: true,
+    type: String,
+  })
   email: string;
 
   @Prop({
@@ -24,6 +30,12 @@ export class TeacherEntity {
     type: String,
   })
   faculty: string;
+
+  @Prop({
+    required: true,
+    type: String,
+  })
+  search_key: string;
 
   @Prop({ required: true, type: String })
   role: string;

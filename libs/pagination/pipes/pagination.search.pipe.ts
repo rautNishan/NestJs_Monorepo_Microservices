@@ -14,8 +14,6 @@ export function PaginationSearchPipe(
     ) {}
 
     async transform(value: Record<string, any>): Promise<Record<string, any>> {
-      console.log('This is Value: ', value);
-
       const searchText = value?.search ?? '';
       const search: Record<string, any> = this.paginationService.search(
         value?._search,
@@ -26,7 +24,6 @@ export function PaginationSearchPipe(
         search: searchText,
         availableSearch,
       };
-
       return {
         ...value,
         _search: search,

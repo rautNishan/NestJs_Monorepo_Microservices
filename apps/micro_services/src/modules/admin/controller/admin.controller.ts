@@ -39,7 +39,7 @@ export class AdminController {
   async registerTeacher({ data }) {
     try {
       const query = { email: data.email };
-      const existingTeacher = await this.teacherService.find(query);
+      const existingTeacher = await this.teacherService.findOne(query);
       if (existingTeacher) {
         throw new RpcException({
           statusCode: HttpStatus.CONFLICT,
@@ -90,9 +90,10 @@ export class AdminController {
   }
 
   @MessagePattern({ cmd: ADMIN_TCP.ADMIN_GET_ALL_TEACHER })
-  async getAllTeacher() {
+  async getAllTeacher(options?: Record<string, any>) {
     try {
-      const result = await this.teacherService.find();
+      console.log('This is Options: ', options);
+      const result = await this.teacherService.findAll(options);
       return result;
     } catch (error) {
       throw error;
@@ -164,7 +165,7 @@ export class AdminController {
   async updateTeacherById({ id, data }) {
     try {
       const query = { _id: id };
-      const existingData = await this.teacherService.find(query);
+      const existingData = await this.teacherService.findOne(query);
       if (!existingData) {
         throw new RpcException({
           statusCode: HttpStatus.NOT_FOUND,
@@ -184,7 +185,7 @@ export class AdminController {
   @MessagePattern({ cmd: ADMIN_TCP.ADMIN_DELETE_TEACHER_BY_ID })
   async deleteTeacher({ id }) {
     const query = { _id: id };
-    const existingTeacher = await this.teacherService.find(query);
+    const existingTeacher = await this.teacherService.findOne(query);
     if (!existingTeacher) {
       throw new RpcException({
         statusCode: HttpStatus.NOT_FOUND,
@@ -201,7 +202,7 @@ export class AdminController {
       });
     }
     existingFaculty.teacherCounts -= 1;
-    const result = await this.teacherService.delete(existingTeacher);
+    const result = await this.teacherService.delete(id);
     await this.facultyService.update(existingFaculty);
     result.message = 'Faculty Deleted Successfully';
     return result;
