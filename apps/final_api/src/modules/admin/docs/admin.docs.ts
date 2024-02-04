@@ -1,5 +1,6 @@
 import { applyDecorators } from '@nestjs/common';
 import { Doc, DocAuth, DocRequest } from 'libs/doc/decorators/doc.decorators';
+import { ID, PAGE, SEARCH } from './constants/admin.doc.constants';
 
 export function AdminGetAllListTeacherDoc(): MethodDecorator {
   return applyDecorators(
@@ -9,15 +10,7 @@ export function AdminGetAllListTeacherDoc(): MethodDecorator {
       operation: 'Admin Register Teacher',
     }),
     DocRequest({
-      queries: [
-        {
-          name: 'search_key',
-          required: false,
-          description: 'Search value',
-          example: 'name',
-          type: String,
-        },
-      ],
+      queries: [SEARCH, PAGE],
     }),
     DocAuth({ jwtAccessToken: true }),
   );
@@ -94,15 +87,7 @@ export function AdminDeleteByIDFacultyDoc(): MethodDecorator {
       operation: 'Admin Edit Faculty',
     }),
     DocRequest({
-      params: [
-        {
-          name: 'id',
-          required: true,
-          description: 'The ID of the faculty',
-          example: '60e0a6e1e9d5f7c1b8e5d7a4',
-          type: String,
-        },
-      ],
+      params: [ID],
     }),
     DocAuth({ jwtAccessToken: true }),
   );
@@ -116,15 +101,7 @@ export function AdminUpdateByIDTeacherDoc(): MethodDecorator {
       operation: 'Admin Edit Teacher',
     }),
     DocRequest({
-      params: [
-        {
-          name: 'id',
-          required: true,
-          description: 'The ID of the Teacher',
-          example: '60e0a6e1e9d5f7c1b8e5d7a4',
-          type: String,
-        },
-      ],
+      params: [ID],
     }),
     DocAuth({ jwtAccessToken: true }),
   );
@@ -138,15 +115,7 @@ export function AdminDeleteByIDTeacherDoc(): MethodDecorator {
       operation: 'Admin Edit Teacher',
     }),
     DocRequest({
-      params: [
-        {
-          name: 'id',
-          required: true,
-          description: 'The ID of the Teacher',
-          example: '60e0a6e1e9d5f7c1b8e5d7a4',
-          type: String,
-        },
-      ],
+      params: [ID],
     }),
     DocAuth({ jwtAccessToken: true }),
   );

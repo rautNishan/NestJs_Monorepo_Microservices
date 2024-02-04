@@ -7,6 +7,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { TeacherEntity } from 'libs/Entities/teacher/teacher.entity';
 import { BaseRepository } from 'libs/database/repository/base.repository.abstract';
+import { PAGINATION_PER_PAGE } from 'libs/pagination/constants/pagination.constant';
 import { Model } from 'mongoose';
 
 // @Injectable()
@@ -39,10 +40,22 @@ export class TeacherRepository extends BaseRepository<TeacherEntity> {
     }
   }
 
-  async findAll(query?: Record<string, any>) {
+  async findAll(options?: Record<string, any>) {
     try {
-      const existingData = await this.teacherModel.find(query).limit(5);
-      return existingData;
+      console.log('This is Options: ', options);
+
+      let { search_key, pageNumber } = options;
+      search_key = { search_key: new RegExp(search_key, 'i') };
+      pageNumber = PAGINATION_PER_PAGE * (pageNumber - 1);
+      const totalCount = await this.teacherModel.countDocuments();
+      console.log('This is Total Count: ', totalCount);
+      const existingData = await this.teacherModel
+        .find(search_key)
+        .limit(PAGINATION_PER_PAGE)
+        .skip(pageNumber);
+      console.log('This is Existing Data: ', existingData);
+
+      return { existingData, totalCount };
     } catch (error) {
       console.log('This is Error in Repository: ', error);
       throw error;

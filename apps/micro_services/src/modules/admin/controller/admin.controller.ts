@@ -38,12 +38,23 @@ export class AdminController {
   @MessagePattern({ cmd: ADMIN_TCP.ADMIN_REGISTER_TEACHER })
   async registerTeacher({ data }) {
     try {
-      const query = { email: data.email };
-      const existingTeacher = await this.teacherService.findOne(query);
+      const existingTeacher = await this.teacherService.findOne({
+        email: data.email,
+      });
       if (existingTeacher) {
         throw new RpcException({
           statusCode: HttpStatus.CONFLICT,
           message: 'Teacher already exists',
+        });
+      }
+
+      const existingTeacherCollegeId = await this.teacherService.findOne({
+        college_id: data.college_id,
+      });
+      if (existingTeacherCollegeId) {
+        throw new RpcException({
+          statusCode: HttpStatus.CONFLICT,
+          message: 'College Id already exists',
         });
       }
       const existingFaculty = await this.facultyService.find({
@@ -55,7 +66,7 @@ export class AdminController {
           message: 'Faculty not found',
         });
       }
-      console.log('This is Existing Faculty: ', existingFaculty);
+
       existingFaculty.teacherCounts += 1; //For each new teacher added, teacherCounts will be increased by 1
       const result = await this.teacherService.registerTeacher(data);
       if (!result) {

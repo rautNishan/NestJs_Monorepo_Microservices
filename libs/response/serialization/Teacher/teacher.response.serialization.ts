@@ -5,6 +5,7 @@ export class TeacherResponseSerialization {
   name: string;
   email: string;
   faculty: string;
+  college_id: string;
   @Exclude()
   password: string;
   @Exclude()
@@ -22,5 +23,6 @@ export class TeacherResponseSerialization {
     this.role = teacher.role;
     this.createdAt = teacher.createdAt;
     this.updatedAt = teacher.updatedAt;
+    this.college_id = teacher.college_id;
   }
 }

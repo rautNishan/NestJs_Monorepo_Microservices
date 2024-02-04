@@ -65,11 +65,11 @@ export class TeacherService {
     }
   }
 
-  async findAll(query?: Record<string, any>) {
+  async findAll(options?: Record<string, any>) {
     try {
-      query = { search_key: new RegExp(query?.search_key, 'i') };
-      console.log('This is Query: ', query);
-      const result = await this.teacherRepository.findAll(query);
+      // query = { search_key: new RegExp(query?.search_key, 'i') };
+      console.log('This is Query: ', options);
+      const result = await this.teacherRepository.findAll(options);
       console.log('This is Result: ', result);
       return result;
     } catch (error) {

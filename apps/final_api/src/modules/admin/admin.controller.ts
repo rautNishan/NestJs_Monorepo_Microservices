@@ -21,6 +21,7 @@ import { FacultyEditDto } from 'libs/dtos/facultyDTO/faculty.edit.dto';
 import { StudentCreateDto } from 'libs/dtos/studentDTO/student.register.dto';
 import { TeacherCreateDto } from 'libs/dtos/teacherDTO/teacher.create.dot';
 import { TeacherUpdateDto } from 'libs/dtos/teacherDTO/teacher.update.dto';
+import { PAGINATION_PAGE } from 'libs/pagination/constants/pagination.constant';
 import { TeacherResponseSerialization } from 'libs/response/serialization/Teacher/teacher.response.serialization';
 import { firstValueFrom } from 'rxjs';
 import {
@@ -56,6 +57,8 @@ export class AdminController {
   @Post('/login')
   async login(@Body() data: AdminDto) {
     try {
+      console.log('This is Login');
+
       const result = await firstValueFrom(
         this.client.send({ cmd: ADMIN_TCP.ADMIN_LOGIN }, { data }),
       );
@@ -130,21 +133,23 @@ export class AdminController {
   @Get('/get-all-teacher')
   async getAllTeacher(
     @Query('search_key') search_key: string,
-  ): Promise<TeacherResponseSerialization[]> {
+    @Query('page') page?: string,
+  ) {
     try {
-      console.log('This is Search Key: ', search_key);
+      const pageNumber = Number(page ? page : PAGINATION_PAGE);
+      console.log('This is Page Number: ', pageNumber);
 
       const result = await firstValueFrom(
         this.client.send(
           { cmd: ADMIN_TCP.ADMIN_GET_ALL_TEACHER },
-          { search_key },
+          { search_key, pageNumber },
         ),
       );
-      console.log('Before Sending: ', result);
       //Serializing and sending back response
-      return result.map((teacher) =>
+      const teachers = result.existingData.map((teacher) =>
         instanceToPlain(new TeacherResponseSerialization(teacher)),
       );
+      return { teachers, totalCount: result.totalCount };
     } catch (error) {
       throw error;
     }
