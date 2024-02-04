@@ -24,7 +24,6 @@ export class TeacherService {
         data.college_id,
         data.name,
       );
-      console.log('This is Search: ', search);
       data.search_key = search;
       return await this.teacherRepository.create(data);
     } catch (error) {
@@ -68,9 +67,7 @@ export class TeacherService {
   async findAll(options?: Record<string, any>) {
     try {
       // query = { search_key: new RegExp(query?.search_key, 'i') };
-      console.log('This is Query: ', options);
       const result = await this.teacherRepository.findAll(options);
-      console.log('This is Result: ', result);
       return result;
     } catch (error) {
       throw error;
@@ -102,9 +99,12 @@ export class TeacherService {
         existingData.name = dataToUpdate.name;
       }
       if (dataToUpdate.hasOwnProperty('faculty')) {
+        console.log('This is Faculty: ', dataToUpdate.faculty);
         existingData.faculty = dataToUpdate.faculty;
       }
       const result = await this.teacherRepository.update(existingData);
+      console.log('This is Result in Service: ', result);
+
       return result;
     } catch (error) {
       throw error;

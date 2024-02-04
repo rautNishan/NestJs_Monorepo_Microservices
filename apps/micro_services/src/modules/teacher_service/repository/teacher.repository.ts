@@ -31,7 +31,6 @@ export class TeacherRepository extends BaseRepository<TeacherEntity> {
 
   async findOne(query?: Record<string, any>) {
     try {
-      console.log('This is Query by id: ', query);
       const existingData = await this.teacherModel.findOne(query);
       return existingData;
     } catch (error) {
@@ -42,18 +41,14 @@ export class TeacherRepository extends BaseRepository<TeacherEntity> {
 
   async findAll(options?: Record<string, any>) {
     try {
-      console.log('This is Options: ', options);
-
       let { search_key, pageNumber } = options;
       search_key = { search_key: new RegExp(search_key, 'i') };
       pageNumber = PAGINATION_PER_PAGE * (pageNumber - 1);
       const totalCount = await this.teacherModel.countDocuments();
-      console.log('This is Total Count: ', totalCount);
       const existingData = await this.teacherModel
         .find(search_key)
         .limit(PAGINATION_PER_PAGE)
         .skip(pageNumber);
-      console.log('This is Existing Data: ', existingData);
 
       return { existingData, totalCount };
     } catch (error) {
@@ -66,6 +61,7 @@ export class TeacherRepository extends BaseRepository<TeacherEntity> {
       const result = await this.teacherModel.findOneAndUpdate(
         { _id: data._id },
         data,
+        { new: true }, //This will return new updated Data, (note: this is used to update Faculty also so returning update is necessary)
       );
       return result;
     } catch (error) {

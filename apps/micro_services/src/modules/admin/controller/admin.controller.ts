@@ -103,7 +103,6 @@ export class AdminController {
   @MessagePattern({ cmd: ADMIN_TCP.ADMIN_GET_ALL_TEACHER })
   async getAllTeacher(options?: Record<string, any>) {
     try {
-      console.log('This is Options: ', options);
       const result = await this.teacherService.findAll(options);
       return result;
     } catch (error) {
@@ -183,10 +182,30 @@ export class AdminController {
           message: 'Teacher not found',
         });
       }
+      const existingFaculty = await this.facultyService.find({
+        name: existingData.faculty,
+      });
+      console.log('This is Existing Faculty to be edited: ', existingFaculty);
+      if (!existingFaculty) {
+        throw new RpcException({
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Faculty not found',
+        });
+      }
       const result = await this.teacherService.updateTeacherById(
         existingData,
         data,
       );
+      if (result) {
+        existingFaculty.teacherCounts -= 1;
+        await this.facultyService.update(existingFaculty);
+        const addNewUpdatedFaculty = await this.facultyService.find({
+          name: result.faculty,
+        });
+        addNewUpdatedFaculty.teacherCounts += 1;
+        console.log('This was updated faculty: ', addNewUpdatedFaculty);
+        await this.facultyService.update(addNewUpdatedFaculty);
+      }
       return result;
     } catch (error) {
       throw error;
@@ -213,6 +232,9 @@ export class AdminController {
       });
     }
     existingFaculty.teacherCounts -= 1;
+    if (existingFaculty.teacherCounts < 0) {
+      existingFaculty.teacherCounts = 0;
+    }
     const result = await this.teacherService.delete(id);
     await this.facultyService.update(existingFaculty);
     result.message = 'Faculty Deleted Successfully';

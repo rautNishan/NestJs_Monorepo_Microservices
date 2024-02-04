@@ -57,8 +57,6 @@ export class AdminController {
   @Post('/login')
   async login(@Body() data: AdminDto) {
     try {
-      console.log('This is Login');
-
       const result = await firstValueFrom(
         this.client.send({ cmd: ADMIN_TCP.ADMIN_LOGIN }, { data }),
       );
