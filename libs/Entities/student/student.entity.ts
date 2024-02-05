@@ -21,7 +21,13 @@ export class StudentEntity {
     required: true,
     type: String,
   })
-  course: string;
+  faculty: string;
+
+  @Prop({
+    required: true,
+    type: String,
+  })
+  college_id: string;
 
   @Prop({
     required: true,

@@ -20,6 +20,14 @@ export class TeacherCreateDto {
   name: string;
 
   @ApiProperty({
+    required: false,
+    type: [String],
+    example: ['N5'],
+    description: 'Section of the Teacher',
+  })
+  section?: string[];
+
+  @ApiProperty({
     required: true,
     type: String,
     example: 'donnishan0@gmail.com',

@@ -15,9 +15,11 @@ import { ApiTags } from '@nestjs/swagger';
 import { instanceToPlain } from 'class-transformer';
 import { UserProtectedGuard } from 'libs/authentication/guard/authentication.guard';
 import { ADMIN_TCP } from 'libs/constants/tcp/admin/admin.tcp.constant';
+import { SECTION_TCP } from 'libs/constants/tcp/section/section.tcp.constant';
 import { AdminDto } from 'libs/dtos/adminDTO/admin.dto';
 import { FacultyDto } from 'libs/dtos/facultyDTO/faculty.dto';
 import { FacultyEditDto } from 'libs/dtos/facultyDTO/faculty.edit.dto';
+import { SectionCreateDto } from 'libs/dtos/sectionDTO/section.create.dto';
 import { StudentCreateDto } from 'libs/dtos/studentDTO/student.register.dto';
 import { TeacherCreateDto } from 'libs/dtos/teacherDTO/teacher.create.dot';
 import { TeacherUpdateDto } from 'libs/dtos/teacherDTO/teacher.update.dto';
@@ -26,11 +28,14 @@ import { TeacherResponseSerialization } from 'libs/response/serialization/Teache
 import { firstValueFrom } from 'rxjs';
 import {
   AdminAddFacultyDoc,
+  AdminAddSectionDoc,
   AdminDeleteByIDFacultyDoc,
+  AdminDeleteByIDSectionDoc,
   AdminDeleteByIDTeacherDoc,
   AdminEditFacultyDoc,
   AdminGetAllFacultyDoc,
   AdminGetAllListTeacherDoc,
+  AdminGetAllSectionDoc,
   AdminRegisterStudentDoc,
   AdminRegisterTeacherDoc,
   AdminUpdateByIDTeacherDoc,
@@ -44,16 +49,6 @@ import {
 export class AdminController {
   constructor(@Inject('MicroService') private readonly client: ClientProxy) {}
 
-  // @AdminGetAllListTeacherDoc()
-  // @UseGuards(UserProtectedGuard)
-  // @Get('teacher-list')
-  // async getAllTeacherList(
-  //   @PaginationQuery(PAGINATION_PER_PAGE, AVAILABLE_SEARCH)
-  //   pagination: PaginationDto,
-  //   // @Query('_search') _search: string,
-  // ) {
-  //   console.log('This is Search  ', pagination);
-  // }
   @Post('/login')
   async login(@Body() data: AdminDto) {
     try {
@@ -135,7 +130,6 @@ export class AdminController {
   ) {
     try {
       const pageNumber = Number(page ? page : PAGINATION_PAGE);
-      console.log('This is Page Number: ', pageNumber);
 
       const result = await firstValueFrom(
         this.client.send(
@@ -197,6 +191,7 @@ export class AdminController {
       throw error;
     }
   }
+
   @AdminDeleteByIDTeacherDoc()
   @UseGuards(UserProtectedGuard)
   @Delete('/delete-teacher/:id')
@@ -204,6 +199,61 @@ export class AdminController {
     try {
       const result = await firstValueFrom(
         this.client.send({ cmd: ADMIN_TCP.ADMIN_DELETE_TEACHER_BY_ID }, { id }),
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @AdminAddSectionDoc()
+  @UseGuards(UserProtectedGuard)
+  @Post('/add-section')
+  async addSection(@Body() data: SectionCreateDto) {
+    try {
+      const result = await firstValueFrom(
+        this.client.send({ cmd: SECTION_TCP.ADMIN_ADD_SECTION }, { data }),
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @AdminGetAllSectionDoc()
+  @UseGuards(UserProtectedGuard)
+  @Get('/get-all-section')
+  async getAllSection(
+    @Query('section') section?: string,
+    @Query('page') page?: string,
+  ) {
+    try {
+      const pageNumber = Number(page ? page : PAGINATION_PAGE);
+      const result = await firstValueFrom(
+        this.client.send(
+          { cmd: SECTION_TCP.ADMIN_GET_ALL_SECTION },
+          {
+            section,
+            pageNumber,
+          },
+        ),
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @AdminDeleteByIDSectionDoc()
+  @UseGuards(UserProtectedGuard)
+  @Delete('/delete-section/:id')
+  async deleteSection(@Param('id') id: string) {
+    try {
+      const result = await firstValueFrom(
+        this.client.send(
+          { cmd: SECTION_TCP.ADMIN_DELETE_SECTION_BY_ID },
+          { id },
+        ),
       );
       return result;
     } catch (error) {

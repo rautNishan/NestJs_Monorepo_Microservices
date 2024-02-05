@@ -1,6 +1,4 @@
-import { Prop, Schema } from '@nestjs/mongoose';
-import { Types } from 'mongoose';
-import { studentDataBaseName } from '../student/student.entity';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
 export const sectionDataBaseName = 'section';
 @Schema({ collection: sectionDataBaseName, timestamps: true })
@@ -11,9 +9,20 @@ export class SectionEntity {
     example: 'N5',
   })
   section: string;
+
   @Prop({
-    ref: studentDataBaseName,
-    type: [Types.ObjectId],
+    required: true,
+    default: 0,
+    type: Number,
   })
-  students: Types.ObjectId[];
+  studentCounts: number;
+
+  @Prop({
+    required: true,
+    default: 0,
+    type: Number,
+  })
+  teacherCounts: number;
 }
+
+export const SectionSchema = SchemaFactory.createForClass(SectionEntity);

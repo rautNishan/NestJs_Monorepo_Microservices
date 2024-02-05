@@ -23,7 +23,7 @@ export class StudentCreateDto {
     example: 'COMPUTING',
   })
   @IsEnum(FACULTY)
-  course: FACULTY;
+  faculty: FACULTY;
   @IsNotEmpty()
   @IsEmail()
   @ApiProperty({

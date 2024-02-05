@@ -7,11 +7,13 @@ import { AdminModule } from './modules/admin/admin.module';
 import { StudentModule } from './modules/student_service/student_service.module';
 import { TeacherModule } from './modules/teacher_service/teacher_service.module';
 import { HelperModule } from 'libs/helper/helper.module';
+import { SectionModule } from './modules/section/section.module';
 @Module({
   imports: [
     StudentModule,
     TeacherModule,
     AdminModule,
+    SectionModule,
     DatabaseModule,
     HelperModule,
     ConfigModule.forRoot({

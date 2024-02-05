@@ -1,6 +1,11 @@
 import { applyDecorators } from '@nestjs/common';
 import { Doc, DocAuth, DocRequest } from 'libs/doc/decorators/doc.decorators';
-import { ID, PAGE, SEARCH } from './constants/admin.doc.constants';
+import {
+  ID,
+  PAGE,
+  SEARCH,
+  SEARCH_SECTION,
+} from './constants/admin.doc.constants';
 
 export function AdminGetAllListTeacherDoc(): MethodDecorator {
   return applyDecorators(
@@ -15,6 +20,7 @@ export function AdminGetAllListTeacherDoc(): MethodDecorator {
     DocAuth({ jwtAccessToken: true }),
   );
 }
+
 export function AdminRegisterTeacherDoc(): MethodDecorator {
   return applyDecorators(
     Doc({
@@ -25,6 +31,7 @@ export function AdminRegisterTeacherDoc(): MethodDecorator {
     DocAuth({ jwtAccessToken: true }),
   );
 }
+
 export function AdminRegisterStudentDoc(): MethodDecorator {
   return applyDecorators(
     Doc({
@@ -35,6 +42,7 @@ export function AdminRegisterStudentDoc(): MethodDecorator {
     DocAuth({ jwtAccessToken: true }),
   );
 }
+
 export function AdminAddFacultyDoc(): MethodDecorator {
   return applyDecorators(
     Doc({
@@ -60,9 +68,9 @@ export function AdminGetAllTeacherDoc(): MethodDecorator {
 export function AdminGetAllFacultyDoc(): MethodDecorator {
   return applyDecorators(
     Doc({
-      summary: 'Admin add Course',
-      description: 'This API is for admin to add Course',
-      operation: 'Admin add Course',
+      summary: 'Admin Get Faculty',
+      description: 'This API is for admin to get Faculty',
+      operation: 'Admin get Faculty',
     }),
     DocAuth({ jwtAccessToken: true }),
   );
@@ -82,7 +90,7 @@ export function AdminEditFacultyDoc(): MethodDecorator {
 export function AdminDeleteByIDFacultyDoc(): MethodDecorator {
   return applyDecorators(
     Doc({
-      summary: 'Admin Edit Faculty',
+      summary: 'Admin Delete Faculty',
       description: 'This API is for admin to Edit Faculty',
       operation: 'Admin Edit Faculty',
     }),
@@ -113,6 +121,45 @@ export function AdminDeleteByIDTeacherDoc(): MethodDecorator {
       summary: 'Admin Edit Teacher',
       description: 'This API is for admin to Edit Teacher',
       operation: 'Admin Edit Teacher',
+    }),
+    DocRequest({
+      params: [ID],
+    }),
+    DocAuth({ jwtAccessToken: true }),
+  );
+}
+
+export function AdminAddSectionDoc(): MethodDecorator {
+  return applyDecorators(
+    Doc({
+      summary: 'Admin add Section',
+      description: 'This API is for admin to add Section',
+      operation: 'Admin add Section',
+    }),
+    DocAuth({ jwtAccessToken: true }),
+  );
+}
+
+export function AdminGetAllSectionDoc(): MethodDecorator {
+  return applyDecorators(
+    Doc({
+      summary: 'Admin Get Section',
+      description: 'This API is for admin to get Section',
+      operation: 'Admin get Section',
+    }),
+    DocRequest({
+      queries: [SEARCH_SECTION, PAGE],
+    }),
+    DocAuth({ jwtAccessToken: true }),
+  );
+}
+
+export function AdminDeleteByIDSectionDoc(): MethodDecorator {
+  return applyDecorators(
+    Doc({
+      summary: 'Admin Delete Section',
+      description: 'This API is for admin to Edit Section',
+      operation: 'Admin Edit Section',
     }),
     DocRequest({
       params: [ID],

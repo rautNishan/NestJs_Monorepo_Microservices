@@ -85,12 +85,20 @@ export class TeacherService {
   // }
 
   async updateTeacherById(existingData, dataToUpdate) {
+    console.log('This is Existing Data: ', existingData);
+    console.log('This is Data to Update: ', dataToUpdate);
+
     try {
       if (dataToUpdate.hasOwnProperty('password')) {
         if (dataToUpdate.password != '') {
           dataToUpdate.password = await bcrypt.hash(dataToUpdate.password, 10);
           existingData.password = dataToUpdate.password;
         }
+      }
+      if (dataToUpdate.hasOwnProperty('section')) {
+        const length = existingData.section.length;
+        console.log('This is Length: ', length);
+        existingData.section[length] = dataToUpdate.section;
       }
       if (dataToUpdate.hasOwnProperty('email')) {
         existingData.email = dataToUpdate.email;

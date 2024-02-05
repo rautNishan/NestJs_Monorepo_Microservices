@@ -5,6 +5,8 @@ import { FacultyService } from '../../faculty/services/faculty.service';
 import { StudentService } from '../../student_service/services/student.service';
 import { TeacherService } from '../../teacher_service/services/teacher.service';
 import { AdminService } from '../services/admin.service';
+import { SECTION_TCP } from 'libs/constants/tcp/section/section.tcp.constant';
+import { SectionService } from '../../section/services/section.service';
 @Controller({
   version: '1',
   path: 'admin',
@@ -15,6 +17,7 @@ export class AdminController {
     private readonly teacherService: TeacherService,
     private readonly studentService: StudentService,
     private readonly facultyService: FacultyService,
+    private readonly sectionService: SectionService,
   ) {}
 
   @MessagePattern({ cmd: ADMIN_TCP.ADMIN_LOGIN })
@@ -138,6 +141,7 @@ export class AdminController {
       throw error;
     }
   }
+
   @MessagePattern({ cmd: ADMIN_TCP.ADMIN_EDIT_FACULTY })
   async editFaculty({ data }) {
     try {
@@ -182,30 +186,51 @@ export class AdminController {
           message: 'Teacher not found',
         });
       }
-      const existingFaculty = await this.facultyService.find({
-        name: existingData.faculty,
-      });
-      console.log('This is Existing Faculty to be edited: ', existingFaculty);
-      if (!existingFaculty) {
-        throw new RpcException({
-          statusCode: HttpStatus.NOT_FOUND,
-          message: 'Faculty not found',
+      //If Section is Updated
+      if (data.section) {
+        if (existingData.section.includes(data.section)) {
+          throw new RpcException({
+            statusCode: HttpStatus.CONFLICT,
+            message: 'Teacher already in this section',
+          });
+        }
+      }
+
+      //if faculty is needed to be updated
+      if (data.faculty) {
+        console.log('Yes Updated Data has Faculty: ', data.faculty);
+        const existingFaculty = await this.facultyService.find({
+          name: existingData.faculty,
         });
+        console.log('This is Existing Faculty: ', existingFaculty);
+
+        existingFaculty.teacherCounts -= 1;
+
+        await this.facultyService.update(existingFaculty);
+        console.log(
+          'This is Existing Faculty after Update -1: ',
+          existingFaculty,
+        );
+        const addNewUpdatedFaculty = await this.facultyService.find({
+          name: data.faculty,
+        });
+        console.log('This is New Updated Faculty: ', addNewUpdatedFaculty);
+        addNewUpdatedFaculty.teacherCounts += 1;
+        await this.facultyService.update(addNewUpdatedFaculty);
+      }
+      if (data.section) {
+        console.log('Yes Updated Data has Section2: ', data.section);
+        const previousSection = await this.sectionService.find({
+          section: data.section,
+        });
+
+        previousSection.teacherCounts += 1;
+        await this.sectionService.update(previousSection);
       }
       const result = await this.teacherService.updateTeacherById(
         existingData,
         data,
       );
-      if (result) {
-        existingFaculty.teacherCounts -= 1;
-        await this.facultyService.update(existingFaculty);
-        const addNewUpdatedFaculty = await this.facultyService.find({
-          name: result.faculty,
-        });
-        addNewUpdatedFaculty.teacherCounts += 1;
-        console.log('This was updated faculty: ', addNewUpdatedFaculty);
-        await this.facultyService.update(addNewUpdatedFaculty);
-      }
       return result;
     } catch (error) {
       throw error;
@@ -219,24 +244,72 @@ export class AdminController {
     if (!existingTeacher) {
       throw new RpcException({
         statusCode: HttpStatus.NOT_FOUND,
-        message: 'Faculty not found',
+        message: 'Teacher not found',
       });
     }
+    if (existingTeacher.section.length > 0) {
+      for (let i = 0; i < existingTeacher.section.length; i++) {
+        const section = await this.sectionService.find({
+          section: existingTeacher.section[i],
+        });
+        section.teacherCounts -= 1;
+        await this.sectionService.update(section);
+      }
+    }
+    const result = await this.teacherService.delete(id);
     const existingFaculty = await this.facultyService.find({
       name: existingTeacher.faculty,
     });
-    if (!existingFaculty) {
+    if (existingFaculty) {
+      existingFaculty.teacherCounts -= 1;
+      if (existingFaculty.teacherCounts < 0) {
+        existingFaculty.teacherCounts = 0;
+      }
+      await this.facultyService.update(existingFaculty);
+    }
+    return result;
+  }
+
+  @MessagePattern({ cmd: SECTION_TCP.ADMIN_ADD_SECTION })
+  async addSection({ data }) {
+    try {
+      const existingSection = await this.sectionService.find({
+        name: data.section,
+      });
+      if (existingSection) {
+        throw new RpcException({
+          statusCode: HttpStatus.CONFLICT,
+          message: 'Section already exists',
+        });
+      }
+      const result = await this.sectionService.create(data);
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @MessagePattern({ cmd: SECTION_TCP.ADMIN_GET_ALL_SECTION })
+  async getAllSection(options?: Record<string, any>) {
+    try {
+      const result = await this.sectionService.findAll(options);
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @MessagePattern({ cmd: SECTION_TCP.ADMIN_DELETE_SECTION_BY_ID })
+  async deleteSection({ id }) {
+    const query = { _id: id };
+    const existingSection = await this.sectionService.find(query);
+    if (!existingSection) {
       throw new RpcException({
         statusCode: HttpStatus.NOT_FOUND,
-        message: 'Faculty not found',
+        message: 'Section not found',
       });
     }
-    existingFaculty.teacherCounts -= 1;
-    if (existingFaculty.teacherCounts < 0) {
-      existingFaculty.teacherCounts = 0;
-    }
-    const result = await this.teacherService.delete(id);
-    await this.facultyService.update(existingFaculty);
+    const result = await this.sectionService.delete(existingSection);
     result.message = 'Faculty Deleted Successfully';
     return result;
   }
