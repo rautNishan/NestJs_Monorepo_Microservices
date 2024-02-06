@@ -273,8 +273,10 @@ export class AdminController {
   @MessagePattern({ cmd: SECTION_TCP.ADMIN_ADD_SECTION })
   async addSection({ data }) {
     try {
+      console.log('This is Data in Section: ', data);
+
       const existingSection = await this.sectionService.find({
-        name: data.section,
+        section: data.section,
       });
       if (existingSection) {
         throw new RpcException({
@@ -312,5 +314,48 @@ export class AdminController {
     const result = await this.sectionService.delete(existingSection);
     result.message = 'Faculty Deleted Successfully';
     return result;
+  }
+
+  @MessagePattern({
+    cmd: SECTION_TCP.ADMIN_FIND_ALL_TEACHER_ACCORDING_TO_SECTION,
+  })
+  async findAllAccordingToSection(options?: Record<string, any>) {
+    try {
+      const result =
+        await this.teacherService.findAllAccordingToSection(options);
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @MessagePattern({ cmd: ADMIN_TCP.ADMIN_DELETE_TEACHER_SECTION })
+  async deleteTeacherSectionById({ id, data }) {
+    try {
+      const query = { _id: id };
+
+      const existingData = await this.teacherService.findOne(query);
+      if (!existingData) {
+        throw new RpcException({
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Teacher not found',
+        });
+      }
+
+      if (data.section) {
+        const previousSection = await this.sectionService.find({
+          section: data.section,
+        });
+        previousSection.teacherCounts -= 1;
+        await this.sectionService.update(previousSection);
+      }
+      const result = await this.teacherService.deleteSectionFromTeacher(
+        id,
+        data,
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
   }
 }

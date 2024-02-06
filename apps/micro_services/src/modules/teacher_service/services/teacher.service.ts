@@ -127,4 +127,27 @@ export class TeacherService {
       throw error;
     }
   }
+
+  async findAllAccordingToSection(options?: Record<string, any>) {
+    try {
+      console.log('This is Options in Service: ', options);
+      const result =
+        await this.teacherRepository.findAllAccordingToSection(options);
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async deleteSectionFromTeacher(id: string, query: Record<string, any>) {
+    try {
+      const result = await this.teacherRepository.deleteSectionFromTeacher(
+        id,
+        query,
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
 }

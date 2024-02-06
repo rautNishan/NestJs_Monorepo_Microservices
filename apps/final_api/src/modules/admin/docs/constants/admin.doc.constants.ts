@@ -29,3 +29,11 @@ export const SEARCH_SECTION = {
   example: 'name',
   type: String,
 };
+
+export const SECTION_NAME = {
+  name: 'section',
+  required: true,
+  description: 'Section Name',
+  example: 'N5',
+  type: String,
+};

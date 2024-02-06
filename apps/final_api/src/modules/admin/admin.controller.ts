@@ -34,6 +34,7 @@ import {
   AdminDeleteByIDTeacherDoc,
   AdminEditFacultyDoc,
   AdminGetAllFacultyDoc,
+  AdminGetAllListTeacherAccordingToSectionDoc,
   AdminGetAllListTeacherDoc,
   AdminGetAllSectionDoc,
   AdminRegisterStudentDoc,
@@ -253,6 +254,53 @@ export class AdminController {
         this.client.send(
           { cmd: SECTION_TCP.ADMIN_DELETE_SECTION_BY_ID },
           { id },
+        ),
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @AdminGetAllListTeacherAccordingToSectionDoc()
+  @UseGuards(UserProtectedGuard)
+  @Get('/get-all-teacher/:section')
+  async getAllTeacherAccordingToSection(
+    @Param('section') section: string,
+    @Query('search_key') search_key: string,
+    @Query('page') page?: string,
+  ) {
+    try {
+      const pageNumber = Number(page ? page : PAGINATION_PAGE);
+      console.log('This is Section: ', section);
+      const result = await firstValueFrom(
+        this.client.send(
+          { cmd: SECTION_TCP.ADMIN_FIND_ALL_TEACHER_ACCORDING_TO_SECTION },
+          { search_key, pageNumber, section },
+        ),
+      );
+      //Serializing and sending back response
+      const teachers = result.existingData.map((teacher) =>
+        instanceToPlain(new TeacherResponseSerialization(teacher)),
+      );
+      return { teachers, totalCount: result.totalCount };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @AdminUpdateByIDTeacherDoc()
+  @UseGuards(UserProtectedGuard)
+  @Patch('/delete-teacher-section/:id')
+  async deleteTeacherSectionById(
+    @Param('id') id,
+    @Body() data: TeacherUpdateDto,
+  ) {
+    try {
+      const result = await firstValueFrom(
+        this.client.send(
+          { cmd: ADMIN_TCP.ADMIN_DELETE_TEACHER_SECTION },
+          { id, data },
         ),
       );
       return result;

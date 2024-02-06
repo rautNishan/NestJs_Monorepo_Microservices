@@ -56,6 +56,7 @@ export class TeacherRepository extends BaseRepository<TeacherEntity> {
       throw error;
     }
   }
+
   async update(data: any) {
     try {
       const result = await this.teacherModel.findOneAndUpdate(
@@ -75,6 +76,38 @@ export class TeacherRepository extends BaseRepository<TeacherEntity> {
       return result;
     } catch (error) {
       console.log('This is Error in Repository: ', error);
+      throw error;
+    }
+  }
+
+  async findAllAccordingToSection(options?: Record<string, any>) {
+    try {
+      let { search_key, pageNumber } = options;
+      const { section } = options;
+      search_key = { search_key: new RegExp(search_key, 'i'), section };
+      pageNumber = PAGINATION_PER_PAGE * (pageNumber - 1);
+      const existingData = await this.teacherModel
+        .find(search_key)
+        .limit(PAGINATION_PER_PAGE)
+        .skip(pageNumber);
+      console.log('This is Existing Data: ', existingData);
+      const totalCount = existingData.length;
+
+      return { existingData, totalCount };
+    } catch (error) {
+      console.log('This is Error in Repository: ', error);
+      throw error;
+    }
+  }
+
+  async deleteSectionFromTeacher(id: string, query: Record<string, any>) {
+    try {
+      const result = await this.teacherModel.updateOne(
+        { _id: id },
+        { $pull: query },
+      );
+      return result;
+    } catch (error) {
       throw error;
     }
   }

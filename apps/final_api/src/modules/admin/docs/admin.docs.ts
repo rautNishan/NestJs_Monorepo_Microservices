@@ -5,6 +5,7 @@ import {
   PAGE,
   SEARCH,
   SEARCH_SECTION,
+  SECTION_NAME,
 } from './constants/admin.doc.constants';
 
 export function AdminGetAllListTeacherDoc(): MethodDecorator {
@@ -163,6 +164,22 @@ export function AdminDeleteByIDSectionDoc(): MethodDecorator {
     }),
     DocRequest({
       params: [ID],
+    }),
+    DocAuth({ jwtAccessToken: true }),
+  );
+}
+
+export function AdminGetAllListTeacherAccordingToSectionDoc(): MethodDecorator {
+  return applyDecorators(
+    Doc({
+      summary: 'Admin Get  Teacher data according to Section',
+      description:
+        'This API is for admin to get Teacher data according to Section',
+      operation: 'Admin get Teacher data according to Section',
+    }),
+    DocRequest({
+      params: [SECTION_NAME],
+      queries: [SEARCH, PAGE],
     }),
     DocAuth({ jwtAccessToken: true }),
   );

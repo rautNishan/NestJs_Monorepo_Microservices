@@ -14,6 +14,7 @@ export class SectionService {
 
   async find(query?: Record<string, any>, options?: any) {
     try {
+      console.log('This is Query in section Service: ', query, options);
       const result = await this.sectionRepository.find(query, options);
       return result;
     } catch (error) {

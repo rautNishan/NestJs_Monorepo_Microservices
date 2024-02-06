@@ -10,6 +10,7 @@ export class StudentCreateDto {
   })
   @IsNotEmpty()
   name: string;
+
   @ApiProperty({
     description: 'Student section',
     example: 'N5',
@@ -17,6 +18,7 @@ export class StudentCreateDto {
   @IsNotEmpty()
   @IsEnum(SECTION)
   section: SECTION;
+
   @IsNotEmpty()
   @ApiProperty({
     description: 'Student course',
@@ -24,6 +26,7 @@ export class StudentCreateDto {
   })
   @IsEnum(FACULTY)
   faculty: FACULTY;
+
   @IsNotEmpty()
   @IsEmail()
   @ApiProperty({
@@ -31,6 +34,7 @@ export class StudentCreateDto {
     example: 'donnishan0@gmail.com',
   })
   email: string;
+
   @IsNotEmpty()
   @ApiProperty({
     description: 'Student password',
