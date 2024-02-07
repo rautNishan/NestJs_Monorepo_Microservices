@@ -1,5 +1,5 @@
-import { Controller } from '@nestjs/common';
-import { MessagePattern } from '@nestjs/microservices';
+import { Controller, HttpStatus } from '@nestjs/common';
+import { MessagePattern, RpcException } from '@nestjs/microservices';
 import { TEACHER_TCP } from 'libs/constants/tcp/teacher/teacher.tcp.constant';
 import { TeacherLoginDto } from 'libs/dtos/teacherDTO/teacher.login.dot';
 import { TeacherService } from '../services/teacher.service';
@@ -29,5 +29,19 @@ export class TeacherController {
       console.log('This is Error in controller: ', error);
       throw error;
     }
+  }
+
+  @MessagePattern({ cmd: TEACHER_TCP.GET_PROFILE })
+  async getProfile({ id }) {
+    const query = { _id: id };
+    const existingTeacher = await this.teacherService.findOne(query);
+    if (!existingTeacher) {
+      throw new RpcException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: 'Teacher not found',
+      });
+    }
+    console.log('This is Existing Teacher: ', existingTeacher);
+    return existingTeacher;
   }
 }

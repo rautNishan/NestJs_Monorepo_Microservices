@@ -87,8 +87,7 @@ export class StudentRepository extends BaseRepository<StudentEntity> {
         .find(search_key)
         .limit(PAGINATION_PER_PAGE)
         .skip(pageNumber);
-      console.log('This is Existing Data: ', existingData);
-      const totalCount = existingData.length;
+      const totalCount = await this.studentModel.countDocuments(search_key);
 
       return { existingData, totalCount };
     } catch (error) {
@@ -103,6 +102,15 @@ export class StudentRepository extends BaseRepository<StudentEntity> {
         { _id: id },
         { $pull: query },
       );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateMany(query: Record<string, any>, data: Record<string, any>) {
+    try {
+      const result = await this.studentModel.updateMany(query, data);
       return result;
     } catch (error) {
       throw error;

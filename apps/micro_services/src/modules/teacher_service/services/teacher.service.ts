@@ -85,9 +85,6 @@ export class TeacherService {
   // }
 
   async updateTeacherById(existingData, dataToUpdate) {
-    console.log('This is Existing Data: ', existingData);
-    console.log('This is Data to Update: ', dataToUpdate);
-
     try {
       if (dataToUpdate.hasOwnProperty('password')) {
         if (dataToUpdate.password != '') {
@@ -97,7 +94,6 @@ export class TeacherService {
       }
       if (dataToUpdate.hasOwnProperty('section')) {
         const length = existingData.section.length;
-        console.log('This is Length: ', length);
         existingData.section[length] = dataToUpdate.section;
       }
       if (dataToUpdate.hasOwnProperty('email')) {
@@ -107,11 +103,9 @@ export class TeacherService {
         existingData.name = dataToUpdate.name;
       }
       if (dataToUpdate.hasOwnProperty('faculty')) {
-        console.log('This is Faculty: ', dataToUpdate.faculty);
         existingData.faculty = dataToUpdate.faculty;
       }
       const result = await this.teacherRepository.update(existingData);
-      console.log('This is Result in Service: ', result);
 
       return result;
     } catch (error) {
@@ -145,6 +139,15 @@ export class TeacherService {
         id,
         query,
       );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateMany(query: Record<string, any>, data: Record<string, any>) {
+    try {
+      const result = await this.teacherRepository.updateMany(query, data);
       return result;
     } catch (error) {
       throw error;

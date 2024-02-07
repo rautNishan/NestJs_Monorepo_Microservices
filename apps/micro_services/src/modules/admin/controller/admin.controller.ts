@@ -221,28 +221,20 @@ export class AdminController {
 
       //if faculty is needed to be updated
       if (data.faculty) {
-        console.log('Yes Updated Data has Faculty: ', data.faculty);
         const existingFaculty = await this.facultyService.find({
           name: existingData.faculty,
         });
-        console.log('This is Existing Faculty: ', existingFaculty);
 
         existingFaculty.teacherCounts -= 1;
 
         await this.facultyService.update(existingFaculty);
-        console.log(
-          'This is Existing Faculty after Update -1: ',
-          existingFaculty,
-        );
         const addNewUpdatedFaculty = await this.facultyService.find({
           name: data.faculty,
         });
-        console.log('This is New Updated Faculty: ', addNewUpdatedFaculty);
         addNewUpdatedFaculty.teacherCounts += 1;
         await this.facultyService.update(addNewUpdatedFaculty);
       }
       if (data.section) {
-        console.log('Yes Updated Data has Section2: ', data.section);
         const previousSection = await this.sectionService.find({
           section: data.section,
         });
@@ -296,8 +288,6 @@ export class AdminController {
   @MessagePattern({ cmd: SECTION_TCP.ADMIN_ADD_SECTION })
   async addSection({ data }) {
     try {
-      console.log('This is Data in Section: ', data);
-
       const existingSection = await this.sectionService.find({
         section: data.section,
       });
@@ -336,6 +326,19 @@ export class AdminController {
     }
     const result = await this.sectionService.delete(existingSection);
     result.message = 'Faculty Deleted Successfully';
+
+    //Delete That section from teacher Data
+    await this.teacherService.updateMany(
+      { section: existingSection.section },
+      { $pull: { section: existingSection.section } },
+    );
+
+    //Delete That section from section Data
+    await this.studentService.updateMany(
+      { section: existingSection.section },
+      { $pull: { section: existingSection.section } },
+    );
+
     return result;
   }
 
@@ -418,7 +421,6 @@ export class AdminController {
         const existingFaculty = await this.facultyService.find({
           name: existingStudent.faculty,
         });
-        console.log('This is Existing Faculty: ', existingFaculty);
 
         existingFaculty.studentCounts -= 1;
 
@@ -457,7 +459,6 @@ export class AdminController {
         message: 'Student not found',
       });
     }
-    console.log('This is Existing Student: ', existingStudent.section.length);
 
     if (existingStudent.section.length > 0) {
       for (let i = 0; i < existingStudent.section.length; i++) {

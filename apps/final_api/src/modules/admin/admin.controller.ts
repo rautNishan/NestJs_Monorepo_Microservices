@@ -91,10 +91,7 @@ export class AdminController {
       let result = await firstValueFrom(
         this.client.send({ cmd: ADMIN_TCP.ADMIN_REGISTER_STUDENT }, { data }),
       );
-      console.log('This is Result: ', result);
       result = instanceToPlain(new StudentResponseSerialization(result));
-      console.log('This is Result: ', result);
-
       return result;
     } catch (error) {
       throw error;
@@ -280,7 +277,6 @@ export class AdminController {
   ) {
     try {
       const pageNumber = Number(page ? page : PAGINATION_PAGE);
-      console.log('This is Section: ', section);
       const result = await firstValueFrom(
         this.client.send(
           { cmd: SECTION_TCP.ADMIN_FIND_ALL_TEACHER_ACCORDING_TO_SECTION },
@@ -384,7 +380,6 @@ export class AdminController {
   ) {
     try {
       const pageNumber = Number(page ? page : PAGINATION_PAGE);
-      console.log('This is Section: ', section);
       const result = await firstValueFrom(
         this.client.send(
           { cmd: SECTION_TCP.ADMIN_FIND_ALL_STUDENT_ACCORDING_TO_SECTION },

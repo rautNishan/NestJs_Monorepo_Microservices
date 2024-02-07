@@ -46,9 +46,6 @@ export class StudentService {
   }
 
   async updateStudentById(existingData, dataToUpdate) {
-    console.log('This is Existing Data: ', existingData);
-    console.log('This is Data to Update: ', dataToUpdate);
-
     try {
       if (dataToUpdate.hasOwnProperty('password')) {
         if (dataToUpdate.password != '') {
@@ -58,7 +55,6 @@ export class StudentService {
       }
       if (dataToUpdate.hasOwnProperty('section')) {
         const length = existingData.section.length;
-        console.log('This is Length: ', length);
         existingData.section[length] = dataToUpdate.section;
       }
       if (dataToUpdate.hasOwnProperty('email')) {
@@ -68,11 +64,9 @@ export class StudentService {
         existingData.name = dataToUpdate.name;
       }
       if (dataToUpdate.hasOwnProperty('faculty')) {
-        console.log('This is Faculty: ', dataToUpdate.faculty);
         existingData.faculty = dataToUpdate.faculty;
       }
       const result = await this.studentRepository.update(existingData);
-      console.log('This is Result in Service: ', result);
 
       return result;
     } catch (error) {
@@ -91,7 +85,6 @@ export class StudentService {
 
   async findAllAccordingToSection(options?: Record<string, any>) {
     try {
-      console.log('This is Options in Service: ', options);
       const result =
         await this.studentRepository.findAllAccordingToSection(options);
       return result;
@@ -106,6 +99,15 @@ export class StudentService {
         id,
         query,
       );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateMany(query: Record<string, any>, data: Record<string, any>) {
+    try {
+      const result = await this.studentRepository.updateMany(query, data);
       return result;
     } catch (error) {
       throw error;

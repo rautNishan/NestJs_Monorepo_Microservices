@@ -83,6 +83,7 @@ export class TeacherRepository extends BaseRepository<TeacherEntity> {
   async findAllAccordingToSection(options?: Record<string, any>) {
     try {
       let { search_key, pageNumber } = options;
+
       const { section } = options;
       search_key = { search_key: new RegExp(search_key, 'i'), section };
       pageNumber = PAGINATION_PER_PAGE * (pageNumber - 1);
@@ -90,9 +91,7 @@ export class TeacherRepository extends BaseRepository<TeacherEntity> {
         .find(search_key)
         .limit(PAGINATION_PER_PAGE)
         .skip(pageNumber);
-      console.log('This is Existing Data: ', existingData);
-      const totalCount = existingData.length;
-
+      const totalCount = await this.teacherModel.countDocuments(search_key);
       return { existingData, totalCount };
     } catch (error) {
       console.log('This is Error in Repository: ', error);
@@ -106,6 +105,15 @@ export class TeacherRepository extends BaseRepository<TeacherEntity> {
         { _id: id },
         { $pull: query },
       );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateMany(query: Record<string, any>, data: Record<string, any>) {
+    try {
+      const result = await this.teacherModel.updateMany(query, data);
       return result;
     } catch (error) {
       throw error;
