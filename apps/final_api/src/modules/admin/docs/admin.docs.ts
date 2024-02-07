@@ -184,3 +184,61 @@ export function AdminGetAllListTeacherAccordingToSectionDoc(): MethodDecorator {
     DocAuth({ jwtAccessToken: true }),
   );
 }
+
+export function AdminGetAllListStudentDoc(): MethodDecorator {
+  return applyDecorators(
+    Doc({
+      summary: 'Admin Register Teacher',
+      description: 'This API is for admin to Register Teacher',
+      operation: 'Admin Register Teacher',
+    }),
+    DocRequest({
+      queries: [SEARCH, PAGE],
+    }),
+    DocAuth({ jwtAccessToken: true }),
+  );
+}
+
+export function AdminUpdateByIDStudentDoc(): MethodDecorator {
+  return applyDecorators(
+    Doc({
+      summary: 'Admin Edit Student',
+      description: 'This API is for admin to Edit Student',
+      operation: 'Admin Edit Student',
+    }),
+    DocRequest({
+      params: [ID],
+    }),
+    DocAuth({ jwtAccessToken: true }),
+  );
+}
+
+export function AdminDeleteByIDStudentDoc(): MethodDecorator {
+  return applyDecorators(
+    Doc({
+      summary: 'Admin delete Student',
+      description: 'This API is for admin to delete Student',
+      operation: 'Admin delete Student',
+    }),
+    DocRequest({
+      params: [ID],
+    }),
+    DocAuth({ jwtAccessToken: true }),
+  );
+}
+
+export function AdminGetAllListStudentAccordingToSectionDoc(): MethodDecorator {
+  return applyDecorators(
+    Doc({
+      summary: 'Admin Get  Student data according to Section',
+      description:
+        'This API is for admin to get Student data according to Section',
+      operation: 'Admin get Student data according to Section',
+    }),
+    DocRequest({
+      params: [SECTION_NAME],
+      queries: [SEARCH, PAGE],
+    }),
+    DocAuth({ jwtAccessToken: true }),
+  );
+}

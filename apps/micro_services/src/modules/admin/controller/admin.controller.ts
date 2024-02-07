@@ -88,15 +88,38 @@ export class AdminController {
   @MessagePattern({ cmd: ADMIN_TCP.ADMIN_REGISTER_STUDENT })
   async registerStudent({ data }) {
     try {
-      const query = { email: data.email };
-      const existingStudent = await this.studentService.find(query);
+      const existingStudent = await this.studentService.findOne({
+        email: data.email,
+      });
       if (existingStudent) {
         throw new RpcException({
           statusCode: HttpStatus.CONFLICT,
           message: 'Student already exists',
         });
       }
+      const existingStudentCollegeId = await this.studentService.findOne({
+        college_id: data.college_id,
+      });
+      if (existingStudentCollegeId) {
+        throw new RpcException({
+          statusCode: HttpStatus.CONFLICT,
+          message: 'College Id already exists',
+        });
+      }
+      const existingFaculty = await this.facultyService.find({
+        name: data.faculty,
+      });
+      if (!existingFaculty) {
+        throw new RpcException({
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Faculty not found',
+        });
+      }
+
+      existingFaculty.studentCounts += 1;
       const result = await this.studentService.registerStudent(data);
+      await this.facultyService.update(existingFaculty);
+
       return result;
     } catch (error) {
       throw error;
@@ -319,7 +342,7 @@ export class AdminController {
   @MessagePattern({
     cmd: SECTION_TCP.ADMIN_FIND_ALL_TEACHER_ACCORDING_TO_SECTION,
   })
-  async findAllAccordingToSection(options?: Record<string, any>) {
+  async findAllTeacherAccordingToSection(options?: Record<string, any>) {
     try {
       const result =
         await this.teacherService.findAllAccordingToSection(options);
@@ -350,6 +373,149 @@ export class AdminController {
         await this.sectionService.update(previousSection);
       }
       const result = await this.teacherService.deleteSectionFromTeacher(
+        id,
+        data,
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @MessagePattern({ cmd: ADMIN_TCP.ADMIN_GET_ALL_STUDENT })
+  async getAllStudent(options?: Record<string, any>) {
+    try {
+      const result = await this.studentService.findAll(options);
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @MessagePattern({ cmd: ADMIN_TCP.ADMIN_UPDATE_STUDENT_BY_ID })
+  async updateStudentById({ id, data }) {
+    try {
+      const query = { _id: id };
+      const existingStudent = await this.studentService.findOne(query);
+      if (!existingStudent) {
+        throw new RpcException({
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Student not found',
+        });
+      }
+      //If Section is Updated
+      if (data.section) {
+        if (existingStudent.section.includes(data.section)) {
+          throw new RpcException({
+            statusCode: HttpStatus.CONFLICT,
+            message: 'Student already in this section',
+          });
+        }
+      }
+
+      //if faculty is needed to be updated
+      if (data.faculty) {
+        const existingFaculty = await this.facultyService.find({
+          name: existingStudent.faculty,
+        });
+        console.log('This is Existing Faculty: ', existingFaculty);
+
+        existingFaculty.studentCounts -= 1;
+
+        await this.facultyService.update(existingFaculty);
+        const addNewUpdatedFaculty = await this.facultyService.find({
+          name: data.faculty,
+        });
+        addNewUpdatedFaculty.studentCounts += 1;
+        await this.facultyService.update(addNewUpdatedFaculty);
+      }
+      if (data.section) {
+        const previousSection = await this.sectionService.find({
+          section: data.section,
+        });
+
+        previousSection.studentCounts += 1;
+        await this.sectionService.update(previousSection);
+      }
+      const result = await this.studentService.updateStudentById(
+        existingStudent,
+        data,
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @MessagePattern({ cmd: ADMIN_TCP.ADMIN_DELETE_STUDENT_BY_ID })
+  async deleteStudent({ id }) {
+    const query = { _id: id };
+    const existingStudent = await this.studentService.findOne(query);
+    if (!existingStudent) {
+      throw new RpcException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: 'Student not found',
+      });
+    }
+    console.log('This is Existing Student: ', existingStudent.section.length);
+
+    if (existingStudent.section.length > 0) {
+      for (let i = 0; i < existingStudent.section.length; i++) {
+        const section = await this.sectionService.find({
+          section: existingStudent.section[i],
+        });
+        section.studentCounts -= 1;
+        await this.sectionService.update(section);
+      }
+    }
+    const result = await this.studentService.delete(id);
+    const existingFaculty = await this.facultyService.find({
+      name: existingStudent.faculty,
+    });
+    if (existingFaculty) {
+      existingFaculty.studentCounts -= 1;
+      if (existingFaculty.studentCounts < 0) {
+        existingFaculty.studentCounts = 0;
+      }
+      await this.facultyService.update(existingFaculty);
+    }
+    return result;
+  }
+
+  @MessagePattern({
+    cmd: SECTION_TCP.ADMIN_FIND_ALL_STUDENT_ACCORDING_TO_SECTION,
+  })
+  async findAllStudentAccordingToSection(options?: Record<string, any>) {
+    try {
+      const result =
+        await this.studentService.findAllAccordingToSection(options);
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @MessagePattern({ cmd: ADMIN_TCP.ADMIN_DELETE_STUDENT_SECTION })
+  async deleteStudentSectionById({ id, data }) {
+    try {
+      const query = { _id: id };
+
+      const existingData = await this.studentService.findOne(query);
+      if (!existingData) {
+        throw new RpcException({
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Student not found',
+        });
+      }
+
+      if (data.section) {
+        const previousSection = await this.sectionService.find({
+          section: data.section,
+        });
+        previousSection.studentCounts -= 1;
+        await this.sectionService.update(previousSection);
+      }
+      const result = await this.studentService.deleteSectionFromStudent(
         id,
         data,
       );

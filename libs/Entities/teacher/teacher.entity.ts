@@ -33,6 +33,7 @@ export class TeacherEntity {
     type: String,
   })
   password: string;
+
   @Prop({
     required: true,
     type: String,

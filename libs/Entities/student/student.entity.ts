@@ -12,10 +12,10 @@ export class StudentEntity {
 
   @Prop({
     ref: sectionDataBaseName,
-    required: true,
-    type: String,
+    required: false,
+    type: [String],
   })
-  section: string;
+  section: string[];
 
   @Prop({
     required: true,
@@ -40,6 +40,12 @@ export class StudentEntity {
     type: String,
   })
   password: string;
+
+  @Prop({
+    required: true,
+    type: String,
+  })
+  search_key: string;
 
   @Prop({ required: true, type: String })
   role: string;

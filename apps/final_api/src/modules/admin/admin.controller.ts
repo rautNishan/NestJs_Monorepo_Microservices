@@ -24,6 +24,7 @@ import { StudentCreateDto } from 'libs/dtos/studentDTO/student.register.dto';
 import { TeacherCreateDto } from 'libs/dtos/teacherDTO/teacher.create.dot';
 import { TeacherUpdateDto } from 'libs/dtos/teacherDTO/teacher.update.dto';
 import { PAGINATION_PAGE } from 'libs/pagination/constants/pagination.constant';
+import { StudentResponseSerialization } from 'libs/response/serialization/Student/student.response.serilization';
 import { TeacherResponseSerialization } from 'libs/response/serialization/Teacher/teacher.response.serialization';
 import { firstValueFrom } from 'rxjs';
 import {
@@ -34,13 +35,17 @@ import {
   AdminDeleteByIDTeacherDoc,
   AdminEditFacultyDoc,
   AdminGetAllFacultyDoc,
+  AdminGetAllListStudentAccordingToSectionDoc,
+  AdminGetAllListStudentDoc,
   AdminGetAllListTeacherAccordingToSectionDoc,
   AdminGetAllListTeacherDoc,
   AdminGetAllSectionDoc,
   AdminRegisterStudentDoc,
   AdminRegisterTeacherDoc,
+  AdminUpdateByIDStudentDoc,
   AdminUpdateByIDTeacherDoc,
 } from './docs/admin.docs';
+import { StudentUpdateDto } from 'libs/dtos/studentDTO/student.update.dto';
 
 @ApiTags('Admin')
 @Controller({
@@ -68,9 +73,10 @@ export class AdminController {
   @Post('/register-teacher')
   async registerTeacher(@Body() data: TeacherCreateDto) {
     try {
-      const result = await firstValueFrom(
+      let result = await firstValueFrom(
         this.client.send({ cmd: ADMIN_TCP.ADMIN_REGISTER_TEACHER }, { data }),
       );
+      result = instanceToPlain(new TeacherResponseSerialization(result));
       return result;
     } catch (error) {
       throw error;
@@ -82,12 +88,14 @@ export class AdminController {
   @Post('/register-student')
   async registerStudent(@Body() data: StudentCreateDto) {
     try {
-      const result = await firstValueFrom(
+      let result = await firstValueFrom(
         this.client.send({ cmd: ADMIN_TCP.ADMIN_REGISTER_STUDENT }, { data }),
       );
-      return result.map((teacher) =>
-        instanceToPlain(new TeacherResponseSerialization(teacher)),
-      );
+      console.log('This is Result: ', result);
+      result = instanceToPlain(new StudentResponseSerialization(result));
+      console.log('This is Result: ', result);
+
+      return result;
     } catch (error) {
       throw error;
     }
@@ -300,6 +308,110 @@ export class AdminController {
       const result = await firstValueFrom(
         this.client.send(
           { cmd: ADMIN_TCP.ADMIN_DELETE_TEACHER_SECTION },
+          { id, data },
+        ),
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @AdminGetAllListStudentDoc()
+  @UseGuards(UserProtectedGuard)
+  @Get('/get-all-student')
+  async getAllStudent(
+    @Query('search_key') search_key: string,
+    @Query('page') page?: string,
+  ) {
+    try {
+      const pageNumber = Number(page ? page : PAGINATION_PAGE);
+
+      const result = await firstValueFrom(
+        this.client.send(
+          { cmd: ADMIN_TCP.ADMIN_GET_ALL_STUDENT },
+          { search_key, pageNumber },
+        ),
+      );
+      //Serializing and sending back response
+      const teachers = result.existingData.map((teacher) =>
+        instanceToPlain(new TeacherResponseSerialization(teacher)),
+      );
+      return { teachers, totalCount: result.totalCount };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @AdminUpdateByIDStudentDoc()
+  @UseGuards(UserProtectedGuard)
+  @Patch('/update-student/:id')
+  async editStudentDataById(@Param('id') id, @Body() data: StudentUpdateDto) {
+    try {
+      const result = await firstValueFrom(
+        this.client.send(
+          { cmd: ADMIN_TCP.ADMIN_UPDATE_STUDENT_BY_ID },
+          { id, data },
+        ),
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @AdminDeleteByIDTeacherDoc()
+  @UseGuards(UserProtectedGuard)
+  @Delete('/delete-student/:id')
+  async deleteStudent(@Param('id') id: string) {
+    try {
+      const result = await firstValueFrom(
+        this.client.send({ cmd: ADMIN_TCP.ADMIN_DELETE_STUDENT_BY_ID }, { id }),
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @AdminGetAllListStudentAccordingToSectionDoc()
+  @UseGuards(UserProtectedGuard)
+  @Get('/get-all-student/:section')
+  async getAllStudentAccordingToSection(
+    @Param('section') section: string,
+    @Query('search_key') search_key: string,
+    @Query('page') page?: string,
+  ) {
+    try {
+      const pageNumber = Number(page ? page : PAGINATION_PAGE);
+      console.log('This is Section: ', section);
+      const result = await firstValueFrom(
+        this.client.send(
+          { cmd: SECTION_TCP.ADMIN_FIND_ALL_STUDENT_ACCORDING_TO_SECTION },
+          { search_key, pageNumber, section },
+        ),
+      );
+      //Serializing and sending back response
+      const teachers = result.existingData.map((teacher) =>
+        instanceToPlain(new TeacherResponseSerialization(teacher)),
+      );
+      return { teachers, totalCount: result.totalCount };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @AdminUpdateByIDStudentDoc()
+  @UseGuards(UserProtectedGuard)
+  @Patch('/delete-student-section/:id')
+  async deleteStudentSectionById(
+    @Param('id') id,
+    @Body() data: TeacherUpdateDto,
+  ) {
+    try {
+      const result = await firstValueFrom(
+        this.client.send(
+          { cmd: ADMIN_TCP.ADMIN_DELETE_STUDENT_SECTION },
           { id, data },
         ),
       );
