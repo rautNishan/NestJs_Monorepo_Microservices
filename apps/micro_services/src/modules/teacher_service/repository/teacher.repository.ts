@@ -86,6 +86,7 @@ export class TeacherRepository extends BaseRepository<TeacherEntity> {
 
       const { section } = options;
       search_key = { search_key: new RegExp(search_key, 'i'), section };
+      console.log('This is Search Key: ', search_key);
       pageNumber = PAGINATION_PER_PAGE * (pageNumber - 1);
       const existingData = await this.teacherModel
         .find(search_key)

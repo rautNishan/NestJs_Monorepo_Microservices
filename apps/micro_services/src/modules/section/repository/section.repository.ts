@@ -67,4 +67,14 @@ export class SectionRepository extends BaseRepository<SectionEntity> {
     );
     return result;
   }
+
+  async findMany(filter?: Record<string, any>, options?: Record<string, any>) {
+    console.log('This is Filter and Options: ', filter, options);
+    const { pageNumber } = options;
+    const result = await this.sectionModel
+      .find(filter)
+      .limit(PAGINATION_PER_PAGE)
+      .skip(PAGINATION_PER_PAGE * (pageNumber - 1));
+    return result;
+  }
 }

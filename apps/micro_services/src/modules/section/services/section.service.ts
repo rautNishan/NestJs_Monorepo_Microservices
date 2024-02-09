@@ -54,4 +54,13 @@ export class SectionService {
       throw error;
     }
   }
+
+  async findMany(filter?: Record<string, any>, options?: Record<string, any>) {
+    try {
+      const result = await this.sectionRepository.findMany(filter, options);
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
 }

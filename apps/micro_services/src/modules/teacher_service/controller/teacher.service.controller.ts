@@ -1,12 +1,23 @@
 import { Controller, HttpStatus } from '@nestjs/common';
 import { MessagePattern, RpcException } from '@nestjs/microservices';
+import { SECTION_TCP } from 'libs/constants/tcp/section/section.tcp.constant';
 import { TEACHER_TCP } from 'libs/constants/tcp/teacher/teacher.tcp.constant';
 import { TeacherLoginDto } from 'libs/dtos/teacherDTO/teacher.login.dot';
+import { IAttendance } from 'libs/interface/attendance.interface';
+import { AttendanceService } from '../../attendance/services/attendance.service';
+import { SectionService } from '../../section/services/section.service';
+import { StudentService } from '../../student_service/services/student.service';
 import { TeacherService } from '../services/teacher.service';
+import { ATTENDANCE_STATUS } from 'libs/constants/enums/attendance.status.enum';
 
 @Controller({})
 export class TeacherController {
-  constructor(private readonly teacherService: TeacherService) {}
+  constructor(
+    private readonly teacherService: TeacherService,
+    private readonly sectionService: SectionService,
+    private readonly studentService: StudentService,
+    private readonly attendanceService: AttendanceService,
+  ) {}
   // @MessagePattern({ cmd: TEACHER_TCP.REGISTER_STUDENT })
   // async registerStudent(data: any) {
   //   console.log('THis is Student Data: ', data);
@@ -41,7 +52,117 @@ export class TeacherController {
         message: 'Teacher not found',
       });
     }
-    console.log('This is Existing Teacher: ', existingTeacher);
     return existingTeacher;
+  }
+
+  @MessagePattern({ cmd: SECTION_TCP.TEACHER_GET_ALL_SECTION })
+  async getAllSectionByTeacherId(data) {
+    try {
+      const { id, pageNumber, section } = data;
+      const existingTeacher = await this.teacherService.findOne({ _id: id });
+      if (!existingTeacher) {
+        throw new RpcException({
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Teacher not found',
+        });
+      }
+      const existingSectionTeacher = existingTeacher.section;
+      //Finding From Array of Section
+      const filter: { section: { $in: string[]; $regex?: RegExp } } = {
+        section: { $in: existingSectionTeacher },
+      };
+      if (section) {
+        filter.section.$regex = new RegExp(section, 'i'); // filter the sections
+      }
+      const dataToBeSent = await this.sectionService.findMany(
+        filter,
+        pageNumber,
+      );
+      return dataToBeSent;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @MessagePattern({
+    cmd: SECTION_TCP.TEACHER_FIND_ALL_STUDENT_ACCORDING_TO_SECTION,
+  })
+  async findAllStudentAccordingToSection(options?: Record<string, any>) {
+    try {
+      const result =
+        await this.studentService.findAllAccordingToSection(options);
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @MessagePattern({ cmd: TEACHER_TCP.TEACHER_ADD_STUDENT_ATTENDANCE })
+  async addStudentAttendance({ id }) {
+    try {
+      const existingStudent = await this.studentService.findOne({ _id: id });
+      if (!existingStudent) {
+        throw new RpcException({
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Student not found',
+        });
+      }
+      console.log('This is sections: ', existingStudent.section);
+      const attendanceData: IAttendance = {
+        student_id: existingStudent._id.toString(),
+        student_name: existingStudent.name,
+        section: existingStudent.section,
+        attendance_date: new Date(),
+        status: ATTENDANCE_STATUS.PRESENT,
+      };
+      const makeAttendance =
+        await this.attendanceService.createAttendance(attendanceData);
+      console.log('This is Result: ', makeAttendance);
+      return makeAttendance;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @MessagePattern({ cmd: TEACHER_TCP.TEACHER_GET_STUDENT_ATTENDANCE })
+  async getStudentAttendance(data: any) {
+    try {
+      const { id, attendance_date, page } = data;
+      console.log('This is ID: ', id);
+      console.log('This is Attendance Date: ', attendance_date);
+      console.log('This is Page: ', page);
+
+      const existingStudent = await this.studentService.findOne({
+        _id: data.id,
+      });
+      if (!existingStudent) {
+        throw new RpcException({
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Student not found',
+        });
+      }
+      const filter: { student_id: string; attendance_date?: Date } = {
+        student_id: existingStudent._id.toString(),
+      };
+      if (attendance_date) {
+        const [year, month, day] = attendance_date.split('-').map(Number);
+
+        const startDate = new Date(Date.UTC(year, month - 1, day, 0, 0, 0));
+        const endDate = new Date(
+          Date.UTC(year, month - 1, day, 23, 59, 59, 999),
+        );
+
+        filter.attendance_date = { $gte: startDate, $lt: endDate } as any;
+      }
+
+      const attendanceData = await this.attendanceService.findMany(filter, {
+        pageNumber: page,
+      });
+      return attendanceData;
+
+      return 'This is Data';
+    } catch (error) {
+      throw error;
+    }
   }
 }
