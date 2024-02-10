@@ -1,6 +1,21 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
 export const sectionDataBaseName = 'section';
+
+@Schema({ _id: false })
+export class TimeTable {
+  @Prop({
+    required: false,
+    type: String,
+  })
+  startTime: string;
+
+  @Prop({
+    required: false,
+    type: String,
+  })
+  endTime: string;
+}
 @Schema({ collection: sectionDataBaseName, timestamps: true })
 export class SectionEntity {
   @Prop({
@@ -23,6 +38,12 @@ export class SectionEntity {
     type: Number,
   })
   teacherCounts: number;
+
+  @Prop({
+    required: false,
+    type: [TimeTable],
+  })
+  timeTable?: TimeTable[];
 }
 
 export const SectionSchema = SchemaFactory.createForClass(SectionEntity);

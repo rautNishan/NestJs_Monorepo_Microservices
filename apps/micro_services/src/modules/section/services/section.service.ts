@@ -44,8 +44,11 @@ export class SectionService {
   async update(existingData, data?) {
     try {
       if (data) {
-        if (data.hasOwnProperty('name')) {
-          existingData.name = data.name;
+        if (data.hasOwnProperty('section')) {
+          existingData.section = data.section;
+        }
+        if (data.hasOwnProperty('timeTable')) {
+          existingData.timeTable = data.timeTable;
         }
       }
       const result = await this.sectionRepository.update(existingData);

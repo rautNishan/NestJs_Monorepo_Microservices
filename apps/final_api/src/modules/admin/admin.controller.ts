@@ -20,7 +20,9 @@ import { AdminDto } from 'libs/dtos/adminDTO/admin.dto';
 import { FacultyDto } from 'libs/dtos/facultyDTO/faculty.dto';
 import { FacultyEditDto } from 'libs/dtos/facultyDTO/faculty.edit.dto';
 import { SectionCreateDto } from 'libs/dtos/sectionDTO/section.create.dto';
+import { SectionUpdateDto } from 'libs/dtos/sectionDTO/section.update.dto';
 import { StudentCreateDto } from 'libs/dtos/studentDTO/student.register.dto';
+import { StudentUpdateDto } from 'libs/dtos/studentDTO/student.update.dto';
 import { TeacherCreateDto } from 'libs/dtos/teacherDTO/teacher.create.dot';
 import { TeacherUpdateDto } from 'libs/dtos/teacherDTO/teacher.update.dto';
 import { PAGINATION_PAGE } from 'libs/pagination/constants/pagination.constant';
@@ -42,10 +44,10 @@ import {
   AdminGetAllSectionDoc,
   AdminRegisterStudentDoc,
   AdminRegisterTeacherDoc,
+  AdminUpdateByIDSectionDoc,
   AdminUpdateByIDStudentDoc,
   AdminUpdateByIDTeacherDoc,
 } from './docs/admin.docs';
-import { StudentUpdateDto } from 'libs/dtos/studentDTO/student.update.dto';
 
 @ApiTags('Admin')
 @Controller({
@@ -226,6 +228,23 @@ export class AdminController {
     }
   }
 
+  @AdminUpdateByIDSectionDoc()
+  @UseGuards(UserProtectedGuard)
+  @Patch('/update-section/:id')
+  async updateSection(@Param('id') id: string, @Body() data: SectionCreateDto) {
+    try {
+      console.log('This is Data: ', data);
+      const result = await firstValueFrom(
+        this.client.send(
+          { cmd: SECTION_TCP.ADMIN_UPDATE_SECTION_BY_ID },
+          { id, data },
+        ),
+      );
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
   @AdminGetAllSectionDoc()
   @UseGuards(UserProtectedGuard)
   @Get('/get-all-section')
@@ -253,12 +272,12 @@ export class AdminController {
   @AdminDeleteByIDSectionDoc()
   @UseGuards(UserProtectedGuard)
   @Delete('/delete-section/:id')
-  async deleteSection(@Param('id') id: string) {
+  async deleteSection(@Param('id') id: string, @Body() data: SectionUpdateDto) {
     try {
       const result = await firstValueFrom(
         this.client.send(
           { cmd: SECTION_TCP.ADMIN_DELETE_SECTION_BY_ID },
-          { id },
+          { id, data },
         ),
       );
       return result;

@@ -107,18 +107,55 @@ export class TeacherController {
           message: 'Student not found',
         });
       }
-      console.log('This is sections: ', existingStudent.section);
-      const attendanceData: IAttendance = {
-        student_id: existingStudent._id.toString(),
-        student_name: existingStudent.name,
+      const sectionDetails = await this.sectionService.find({
         section: existingStudent.section,
-        attendance_date: new Date(),
-        status: ATTENDANCE_STATUS.PRESENT,
-      };
-      const makeAttendance =
-        await this.attendanceService.createAttendance(attendanceData);
-      console.log('This is Result: ', makeAttendance);
-      return makeAttendance;
+      });
+      console.log('This is Section Details: ', sectionDetails);
+      const datePresent = new Date();
+      let hour = datePresent.getHours();
+      const minute = datePresent.getMinutes();
+      if (hour > 12) {
+        hour = hour - 12;
+      }
+      const timeTableLength = sectionDetails.timeTable.length;
+
+      console.log('This is Date Present: ', datePresent);
+      for (let i = 0; i < timeTableLength; i++) {
+        let startTimeHour;
+        let status_;
+        if (sectionDetails.timeTable[i].startTime.includes(':')) {
+          startTimeHour = parseInt(
+            sectionDetails.timeTable[i].startTime.split(':')[0],
+          );
+        } else {
+          startTimeHour = parseInt(sectionDetails.timeTable[i].startTime);
+        }
+        console.log('This is Start Time Hour: ', startTimeHour);
+        if (startTimeHour === hour) {
+          if (minute < 10) {
+            status_ = ATTENDANCE_STATUS.PRESENT;
+          }
+          if (minute > 10) {
+            status_ = ATTENDANCE_STATUS.LATE;
+          }
+          if (minute > 20) {
+            status_ = ATTENDANCE_STATUS.VERY_LATE;
+          }
+          console.log('This is sections: ', existingStudent.section);
+          const attendanceData: IAttendance = {
+            student_id: existingStudent._id.toString(),
+            student_name: existingStudent.name,
+            section: existingStudent.section,
+            attendance_date: new Date(),
+            status: status_,
+          };
+          const makeAttendance =
+            await this.attendanceService.createAttendance(attendanceData);
+          console.log('This is Result: ', makeAttendance);
+          return makeAttendance;
+        }
+      }
+      return null;
     } catch (error) {
       throw error;
     }
@@ -159,8 +196,6 @@ export class TeacherController {
         pageNumber: page,
       });
       return attendanceData;
-
-      return 'This is Data';
     } catch (error) {
       throw error;
     }

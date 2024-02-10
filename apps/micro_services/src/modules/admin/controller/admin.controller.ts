@@ -304,6 +304,24 @@ export class AdminController {
     }
   }
 
+  @MessagePattern({ cmd: SECTION_TCP.ADMIN_UPDATE_SECTION_BY_ID })
+  async updateSectionById({ id, data }) {
+    try {
+      const query = { _id: id };
+      const existingSection = await this.sectionService.find(query);
+      if (!existingSection) {
+        throw new RpcException({
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Section not found',
+        });
+      }
+      const result = await this.sectionService.update(existingSection, data);
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   @MessagePattern({ cmd: SECTION_TCP.ADMIN_GET_ALL_SECTION })
   async getAllSection(options?: Record<string, any>) {
     try {

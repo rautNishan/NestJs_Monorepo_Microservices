@@ -169,6 +169,20 @@ export function AdminDeleteByIDSectionDoc(): MethodDecorator {
   );
 }
 
+export function AdminUpdateByIDSectionDoc(): MethodDecorator {
+  return applyDecorators(
+    Doc({
+      summary: 'Admin update Section',
+      description: 'This API is for admin to update Section',
+      operation: 'Admin update Section',
+    }),
+    DocRequest({
+      params: [ID],
+    }),
+    DocAuth({ jwtAccessToken: true }),
+  );
+}
+
 export function AdminGetAllListTeacherAccordingToSectionDoc(): MethodDecorator {
   return applyDecorators(
     Doc({
