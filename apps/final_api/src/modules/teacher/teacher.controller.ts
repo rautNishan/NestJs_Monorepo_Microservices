@@ -113,14 +113,18 @@ export class TeacherController {
   }
 
   @TeacherMakeStudentAttendanceDoc()
-  @UseGuards(UserProtectedGuard)
-  @Post('/add-student-attendance/:id')
-  async addStudentAttendance(@Param('id') id: string) {
-    console.log('This is id', id);
+  // @UseGuards(UserProtectedGuard)
+  @Post('/add-student-attendance/:college_id')
+  async addStudentAttendance(
+    @Param('college_id') college_id: string,
+    @Body() data: any,
+  ) {
+    console.log('This is Data', data);
+    console.log('This is id', college_id);
     const result = await firstValueFrom(
       this.client.send(
         { cmd: TEACHER_TCP.TEACHER_ADD_STUDENT_ATTENDANCE },
-        { id },
+        { college_id, data },
       ),
     );
     return result;

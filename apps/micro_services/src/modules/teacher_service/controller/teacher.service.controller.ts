@@ -98,9 +98,18 @@ export class TeacherController {
   }
 
   @MessagePattern({ cmd: TEACHER_TCP.TEACHER_ADD_STUDENT_ATTENDANCE })
-  async addStudentAttendance({ id }) {
+  async addStudentAttendance({ college_id, data }) {
     try {
-      const existingStudent = await this.studentService.findOne({ _id: id });
+      console.log('This is Data: ', data);
+      const incomingHour = data.time.split(':')[0];
+      const incomingMinute = data.time.split(':')[1];
+
+      console.log('This is Incoming Hour: ', incomingHour);
+      console.log('This is Incoming Minute: ', incomingMinute);
+
+      const existingStudent = await this.studentService.findOne({
+        college_id: college_id,
+      });
       if (!existingStudent) {
         throw new RpcException({
           statusCode: HttpStatus.NOT_FOUND,
@@ -111,15 +120,8 @@ export class TeacherController {
         section: existingStudent.section,
       });
       console.log('This is Section Details: ', sectionDetails);
-      const datePresent = new Date();
-      let hour = datePresent.getHours();
-      const minute = datePresent.getMinutes();
-      if (hour > 12) {
-        hour = hour - 12;
-      }
       const timeTableLength = sectionDetails.timeTable.length;
-
-      console.log('This is Date Present: ', datePresent);
+      console.log('This is Time Table Length: ', timeTableLength);
       for (let i = 0; i < timeTableLength; i++) {
         let startTimeHour;
         let status_;
@@ -131,14 +133,14 @@ export class TeacherController {
           startTimeHour = parseInt(sectionDetails.timeTable[i].startTime);
         }
         console.log('This is Start Time Hour: ', startTimeHour);
-        if (startTimeHour === hour) {
-          if (minute < 10) {
+        if (startTimeHour === parseInt(incomingHour)) {
+          if (incomingMinute < 10) {
             status_ = ATTENDANCE_STATUS.PRESENT;
           }
-          if (minute > 10) {
+          if (incomingMinute > 10) {
             status_ = ATTENDANCE_STATUS.LATE;
           }
-          if (minute > 20) {
+          if (incomingMinute > 20) {
             status_ = ATTENDANCE_STATUS.VERY_LATE;
           }
           console.log('This is sections: ', existingStudent.section);
@@ -148,6 +150,10 @@ export class TeacherController {
             section: existingStudent.section,
             attendance_date: new Date(),
             status: status_,
+            timeTable: {
+              startTime: sectionDetails.timeTable[i].startTime,
+              endTime: sectionDetails.timeTable[i].endTime,
+            },
           };
           const makeAttendance =
             await this.attendanceService.createAttendance(attendanceData);

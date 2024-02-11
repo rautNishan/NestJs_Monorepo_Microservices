@@ -5,6 +5,13 @@ export const ID = {
   example: '60e0a6e1e9d5f7c1b8e5d7a4',
   type: String,
 };
+export const COLLEGE_ID = {
+  name: 'college_id',
+  required: true,
+  description: 'College Id',
+  example: 'S001',
+  type: String,
+};
 
 export const SECTION_NAME = {
   name: 'section',

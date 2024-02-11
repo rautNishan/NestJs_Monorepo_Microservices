@@ -2,6 +2,7 @@ import { applyDecorators } from '@nestjs/common';
 import { Doc, DocAuth, DocRequest } from 'libs/doc/decorators/doc.decorators';
 import {
   ATTENDANCE_DATE,
+  COLLEGE_ID,
   ID,
   PAGE,
   SEARCH,
@@ -57,9 +58,9 @@ export function TeacherMakeStudentAttendanceDoc(): MethodDecorator {
       operation: 'Teacher add student attendance',
     }),
     DocRequest({
-      params: [ID],
+      params: [COLLEGE_ID],
     }),
-    DocAuth({ jwtAccessToken: true }),
+    // DocAuth({ jwtAccessToken: false }),
   );
 }
 

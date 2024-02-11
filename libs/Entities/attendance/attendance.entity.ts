@@ -1,6 +1,20 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
 const AttendanceDataBaseName = 'attendance';
+@Schema({ _id: false })
+export class TimeTable {
+  @Prop({
+    required: false,
+    type: String,
+  })
+  startTime: string;
+
+  @Prop({
+    required: false,
+    type: String,
+  })
+  endTime: string;
+}
 @Schema({ collection: AttendanceDataBaseName, timestamps: true })
 export class AttendanceEntity {
   @Prop({
@@ -33,6 +47,12 @@ export class AttendanceEntity {
     //P for Present A for Absent
   })
   status: string;
+
+  @Prop({
+    required: false,
+    type: TimeTable,
+  })
+  timeTable?: TimeTable;
 }
 
 export const AttendanceSchema = SchemaFactory.createForClass(AttendanceEntity);
