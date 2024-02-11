@@ -7,12 +7,14 @@ import { ResponseInterceptor } from 'libs/response/interceptors/response.interce
 import { AdminController } from './modules/admin/admin.controller';
 import { StudentController } from './modules/student/student.controller';
 import { TeacherController } from './modules/teacher/teacher.controller';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
     AuthenticationModule,
     PaginationModule,
     // HelperModule,
+    ScheduleModule.forRoot(),
     ClientsModule.register([
       {
         name: 'MicroService',

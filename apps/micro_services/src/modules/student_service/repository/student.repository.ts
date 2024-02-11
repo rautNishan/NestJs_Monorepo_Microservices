@@ -17,6 +17,7 @@ export class StudentRepository extends BaseRepository<StudentEntity> {
   async create(data: any): Promise<any> {
     return await this.studentModel.create(data);
   }
+
   async find(query?: Record<string, any>) {
     let result;
     if (query) {
@@ -115,5 +116,20 @@ export class StudentRepository extends BaseRepository<StudentEntity> {
     } catch (error) {
       throw error;
     }
+  }
+
+  async findMany(filter?: Record<string, any>, options?: Record<string, any>) {
+    console.log('This is Filter and Options: ', filter, options);
+    const { pageNumber } = options;
+    const result = await this.studentModel
+      .find(filter)
+      .limit(PAGINATION_PER_PAGE)
+      .skip(PAGINATION_PER_PAGE * (pageNumber - 1));
+    return result;
+  }
+
+  async findUnlimited(filter?: Record<string, any>) {
+    const result = await this.studentModel.find(filter);
+    return result;
   }
 }

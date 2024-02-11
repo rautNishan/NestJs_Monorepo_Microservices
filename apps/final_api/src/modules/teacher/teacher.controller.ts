@@ -27,7 +27,7 @@ import {
   TeacherGetStudentAttendanceDoc,
   TeacherMakeStudentAttendanceDoc,
 } from './docs/teacher.docs';
-
+import { Cron } from '@nestjs/schedule';
 @ApiTags('Teacher')
 @Controller({
   version: '1',
@@ -146,5 +146,16 @@ export class TeacherController {
       ),
     );
     return result;
+  }
+
+  @Cron(' 100000 * * * * *')
+  async automaticAbsentAttendance() {
+    console.log('This function is called');
+    await firstValueFrom(
+      this.client.send(
+        { cmd: TEACHER_TCP.TEACHER_ADD_ABSENT_STUDENT_ATTENDANCE },
+        {},
+      ),
+    );
   }
 }

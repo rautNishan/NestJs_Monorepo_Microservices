@@ -27,4 +27,32 @@ export class AttendanceRepository extends BaseRepository<AttendanceEntity> {
       .skip(PAGINATION_PER_PAGE * (pageNumber - 1));
     return result;
   }
+
+  async findUnlimited(filter?: Record<string, any>) {
+    const result = await this.attendanceModel.find(filter);
+    return result;
+  }
+
+  async findOne(query?: Record<string, any>) {
+    try {
+      const existingData = await this.attendanceModel.findOne(query);
+      return existingData;
+    } catch (error) {
+      console.log('This is Error in Repository: ', error);
+      throw error;
+    }
+  }
+
+  async update(existingData: any) {
+    try {
+      const result = await this.attendanceModel.updateOne(
+        { _id: existingData._id },
+        existingData,
+      );
+      return result;
+    } catch (error) {
+      console.log('This is Error in Repository: ', error);
+      throw error;
+    }
+  }
 }

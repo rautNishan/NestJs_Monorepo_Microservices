@@ -113,4 +113,21 @@ export class StudentService {
       throw error;
     }
   }
+  async find(query?: Record<string, any>) {
+    try {
+      const result = await this.studentRepository.find(query);
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async findUnlimited(filter?: Record<string, any>) {
+    try {
+      const result = await this.studentRepository.findUnlimited(filter);
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
