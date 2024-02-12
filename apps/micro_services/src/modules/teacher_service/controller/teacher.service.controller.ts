@@ -1,5 +1,6 @@
 import { Controller, HttpStatus } from '@nestjs/common';
 import { MessagePattern, RpcException } from '@nestjs/microservices';
+import { ATTENDANCE_STATUS } from 'libs/constants/enums/attendance.status.enum';
 import { SECTION_TCP } from 'libs/constants/tcp/section/section.tcp.constant';
 import { TEACHER_TCP } from 'libs/constants/tcp/teacher/teacher.tcp.constant';
 import { TeacherLoginDto } from 'libs/dtos/teacherDTO/teacher.login.dot';
@@ -8,8 +9,6 @@ import { AttendanceService } from '../../attendance/services/attendance.service'
 import { SectionService } from '../../section/services/section.service';
 import { StudentService } from '../../student_service/services/student.service';
 import { TeacherService } from '../services/teacher.service';
-import { ATTENDANCE_STATUS } from 'libs/constants/enums/attendance.status.enum';
-import { start } from 'repl';
 
 @Controller({})
 export class TeacherController {
@@ -145,100 +144,26 @@ export class TeacherController {
         console.log('This is EndTimeMinute: ', endTimeMinute);
 
         if (incomingHour >= startTimeHour && incomingHour <= endTimeHour) {
-          if (
-            incomingMinute >= startTimeMinute &&
-            incomingMinute <= endTimeMinute
-          ) {
-            console.log('This is Existing Attendance: ', existingAttendance[i]);
-            const updatedAttendance = existingAttendance[i];
-            if (incomingMinute < startTimeMinute + 10) {
-              updatedAttendance.status = ATTENDANCE_STATUS.PRESENT;
-            }
-            if (incomingMinute > startTimeMinute + 10) {
-              updatedAttendance.status = ATTENDANCE_STATUS.LATE;
-            }
-            if (incomingMinute > startTimeMinute + 20) {
-              updatedAttendance.status = ATTENDANCE_STATUS.VERY_LATE;
-            }
-            await this.attendanceService.updateAttendance(updatedAttendance);
+          // if (
+          //   incomingMinute >= startTimeMinute &&
+          //   incomingMinute <= endTimeMinute
+          // ) {
+          console.log('This is Existing Attendance: ', existingAttendance[i]);
+          const updatedAttendance = existingAttendance[i];
+          if (incomingMinute < startTimeMinute + 10) {
+            updatedAttendance.status = ATTENDANCE_STATUS.PRESENT;
           }
+          if (incomingMinute > startTimeMinute + 10) {
+            updatedAttendance.status = ATTENDANCE_STATUS.LATE;
+          }
+          if (incomingMinute > startTimeMinute + 20) {
+            updatedAttendance.status = ATTENDANCE_STATUS.VERY_LATE;
+          }
+          const result =
+            this.attendanceService.updateAttendance(updatedAttendance);
+          return result;
         }
       }
-
-      // if (!existingStudent) {
-      //   throw new RpcException({
-      //     statusCode: HttpStatus.NOT_FOUND,
-      //     message: 'Student not found',
-      //   });
-      // }
-      // const sectionDetails = await this.sectionService.find({
-      //   section: existingStudent.section,
-      // });
-      // console.log('This is Section Details: ', sectionDetails);
-      // const timeTableLength = sectionDetails.timeTable.length;
-      // console.log('This is Time Table Length: ', timeTableLength);
-      // incomingHour = parseInt(incomingHour);
-      // incomingMinute = parseInt(incomingMinute);
-      // console.log('This is Type of Incoming Hour: ', typeof incomingHour);
-      // console.log('This is Type of Incoming Minute: ', typeof incomingMinute);
-      // for (let i = 0; i < timeTableLength; i++) {
-      //   let startTimeHour;
-      //   let endTimeHour;
-      //   let status_;
-      //   if (sectionDetails.timeTable[i].startTime.includes(':')) {
-      //     startTimeHour = parseInt(
-      //       sectionDetails.timeTable[i].startTime.split(':')[0],
-      //     );
-      //   } else {
-      //     startTimeHour = parseInt(sectionDetails.timeTable[i].startTime);
-      //   }
-      //   if (sectionDetails.timeTable[i].endTime.includes(':')) {
-      //     endTimeHour = parseInt(
-      //       sectionDetails.timeTable[i].endTime.split(':')[0],
-      //     );
-      //   } else {
-      //     endTimeHour = parseInt(sectionDetails.timeTable[i].endTime);
-      //   }
-
-      //   console.log('This is EndTimeHour: ', endTimeHour);
-
-      //   console.log('This is Start Time Hour: ', startTimeHour);
-      //   if (incomingHour > startTimeHour) {
-      //     console.log('Yes IncomingHour is Greater Than StartTimeHour');
-      //   }
-      //   if (incomingHour < endTimeHour) {
-      //     console.log('Yes IncomingHour is Less Than EndTimeHour');
-      //   }
-      //   if (
-      //     startTimeHour === incomingHour ||
-      //     (incomingHour > startTimeHour && incomingHour < endTimeHour)
-      //   ) {
-      //     if (incomingMinute < 10) {
-      //       status_ = ATTENDANCE_STATUS.PRESENT;
-      //     }
-      //     if (incomingMinute > 10) {
-      //       status_ = ATTENDANCE_STATUS.LATE;
-      //     }
-      //     if (incomingMinute > 20) {
-      //       status_ = ATTENDANCE_STATUS.VERY_LATE;
-      //     }
-      //     console.log('This is sections: ', existingStudent.section);
-      //     const attendanceData: IAttendance = {
-      //       student_id: existingStudent._id.toString(),
-      //       student_name: existingStudent.name,
-      //       section: existingStudent.section,
-      //       attendance_date: new Date(),
-      //       status: status_,
-      //       timeTable: {
-      //         startTime: sectionDetails.timeTable[i].startTime,
-      //         endTime: sectionDetails.timeTable[i].endTime,
-      //       },
-      //     };
-      //     const makeAttendance =
-      //       await this.attendanceService.createAttendance(attendanceData);
-      //     console.log('This is Result: ', makeAttendance);
-      //     return makeAttendance;
-      //   }
       // }
       return null;
     } catch (error) {
@@ -267,19 +192,25 @@ export class TeacherController {
         student_id: existingStudent._id.toString(),
       };
       if (attendance_date) {
+        console.log('This is Attendance Date: ', attendance_date);
+
         const [year, month, day] = attendance_date.split('-').map(Number);
 
-        const startDate = new Date(Date.UTC(year, month - 1, day, 0, 0, 0));
-        const endDate = new Date(
-          Date.UTC(year, month - 1, day, 23, 59, 59, 999),
-        );
+        if (!isNaN(year) && !isNaN(month) && !isNaN(day)) {
+          const startDate = new Date(Date.UTC(year, month - 1, day, 0, 0, 0));
+          const endDate = new Date(
+            Date.UTC(year, month - 1, day, 23, 59, 59, 999),
+          );
 
-        filter.attendance_date = { $gte: startDate, $lt: endDate } as any;
+          filter.attendance_date = { $gte: startDate, $lt: endDate } as any;
+          console.log('This is Filter: ', filter);
+        }
       }
-
       const attendanceData = await this.attendanceService.findMany(filter, {
         pageNumber: page,
       });
+      console.log('This is Attendance Data: ', attendanceData);
+
       return attendanceData;
     } catch (error) {
       throw error;
@@ -314,6 +245,7 @@ export class TeacherController {
             attendance_date: new Date(),
             status: ATTENDANCE_STATUS.ABSENT,
             timeTable: {
+              subject: sectionDetails.timeTable[j].subject,
               startTime: sectionDetails.timeTable[j].startTime,
               endTime: sectionDetails.timeTable[j].endTime,
             },
@@ -325,5 +257,18 @@ export class TeacherController {
     } catch (error) {
       throw error;
     }
+  }
+
+  @MessagePattern({ cmd: TEACHER_TCP.TEACHER_UPDATE_STUDENT_ATTENDANCE })
+  async updateStudentAttendance({ data }) {
+    const existingAttendance = await this.attendanceService.findOne({
+      _id: data._id,
+    });
+    console.log('This is existing Attendance: ', existingAttendance);
+    existingAttendance.status = data.status;
+    console.log(existingAttendance);
+    const result =
+      await this.attendanceService.updateAttendance(existingAttendance);
+    return result;
   }
 }

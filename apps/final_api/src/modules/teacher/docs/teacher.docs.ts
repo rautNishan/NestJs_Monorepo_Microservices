@@ -79,3 +79,17 @@ export function TeacherGetStudentAttendanceDoc(): MethodDecorator {
     DocAuth({ jwtAccessToken: true }),
   );
 }
+
+export function TeacherUpdateStudentAttendanceDoc(): MethodDecorator {
+  return applyDecorators(
+    Doc({
+      summary: 'Teacher update student attendance',
+      description: 'This API is for teacher to update student attendance',
+      operation: 'Teacher update student attendance',
+    }),
+    // DocRequest({
+    //   params: [COLLEGE_ID],
+    // }),
+    DocAuth({ jwtAccessToken: false }),
+  );
+}

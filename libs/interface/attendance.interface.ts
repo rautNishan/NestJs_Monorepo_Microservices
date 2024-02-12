@@ -1,4 +1,5 @@
 export interface ITimeTable {
+  subject: string;
   startTime: string;
   endTime: string;
 }

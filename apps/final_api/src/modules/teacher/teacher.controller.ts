@@ -4,6 +4,7 @@ import {
   Get,
   Inject,
   Param,
+  Patch,
   Post,
   Query,
   UseGuards,
@@ -26,8 +27,8 @@ import {
   TeacherGetProfile,
   TeacherGetStudentAttendanceDoc,
   TeacherMakeStudentAttendanceDoc,
+  TeacherUpdateStudentAttendanceDoc,
 } from './docs/teacher.docs';
-import { Cron } from '@nestjs/schedule';
 @ApiTags('Teacher')
 @Controller({
   version: '1',
@@ -114,7 +115,7 @@ export class TeacherController {
 
   @TeacherMakeStudentAttendanceDoc()
   // @UseGuards(UserProtectedGuard)
-  @Post('/add-student-attendance/:college_id')
+  @Patch('/add-student-attendance/:college_id')
   async addStudentAttendance(
     @Param('college_id') college_id: string,
     @Body() data: any,
@@ -139,6 +140,8 @@ export class TeacherController {
     @Query('page') page?: string,
   ) {
     console.log('This is id', id);
+    console.log('This is Page', page);
+
     const result = await firstValueFrom(
       this.client.send(
         { cmd: TEACHER_TCP.TEACHER_GET_STUDENT_ATTENDANCE },
@@ -148,7 +151,10 @@ export class TeacherController {
     return result;
   }
 
-  @Cron(' 100000 * * * * *')
+  //This function will be called automatically every day and make student absent
+  //And later when the camera is on and if student is detected
+  //then addStudentAttendance function will be called to update those student attendance who are present
+  // @Cron(' 1 * * * * *')
   async automaticAbsentAttendance() {
     console.log('This function is called');
     await firstValueFrom(
@@ -157,5 +163,19 @@ export class TeacherController {
         {},
       ),
     );
+  }
+
+  @TeacherUpdateStudentAttendanceDoc()
+  @UseGuards(UserProtectedGuard)
+  @Patch('/update-student-attendance')
+  async updateStudentAttendance(@Body() data: any) {
+    console.log('This is Data', data);
+    const result = await firstValueFrom(
+      this.client.send(
+        { cmd: TEACHER_TCP.TEACHER_UPDATE_STUDENT_ATTENDANCE },
+        { data },
+      ),
+    );
+    return result;
   }
 }

@@ -4,6 +4,12 @@ const AttendanceDataBaseName = 'attendance';
 @Schema({ _id: false })
 export class TimeTable {
   @Prop({
+    required: true,
+    type: String,
+  })
+  subject: string;
+
+  @Prop({
     required: false,
     type: String,
   })

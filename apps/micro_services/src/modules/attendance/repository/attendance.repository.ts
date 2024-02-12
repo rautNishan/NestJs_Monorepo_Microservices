@@ -15,7 +15,11 @@ export class AttendanceRepository extends BaseRepository<AttendanceEntity> {
   }
 
   async create(data: any) {
-    return await this.attendanceModel.create(data);
+    try {
+      return await this.attendanceModel.create(data);
+    } catch (error) {
+      throw error;
+    }
   }
 
   async findMany(filter?: Record<string, any>, options?: Record<string, any>) {
@@ -25,7 +29,8 @@ export class AttendanceRepository extends BaseRepository<AttendanceEntity> {
       .find(filter)
       .limit(PAGINATION_PER_PAGE)
       .skip(PAGINATION_PER_PAGE * (pageNumber - 1));
-    return result;
+    const totalCount = await this.attendanceModel.countDocuments(filter);
+    return { result, totalCount };
   }
 
   async findUnlimited(filter?: Record<string, any>) {
