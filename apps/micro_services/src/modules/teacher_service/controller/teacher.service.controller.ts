@@ -34,6 +34,7 @@ export class TeacherController {
   @MessagePattern({ cmd: TEACHER_TCP.LOGIN })
   async login(data: TeacherLoginDto) {
     try {
+      console.log('This is Teacher Login');
       const result = await this.teacherService.login(data);
       return result;
     } catch (error) {
@@ -59,6 +60,8 @@ export class TeacherController {
   async getAllSectionByTeacherId(data) {
     try {
       const { id, pageNumber, section } = data;
+      console.log('This is PageNumber1: ', pageNumber);
+
       const existingTeacher = await this.teacherService.findOne({ _id: id });
       if (!existingTeacher) {
         throw new RpcException({
@@ -74,10 +77,9 @@ export class TeacherController {
       if (section) {
         filter.section.$regex = new RegExp(section, 'i'); // filter the sections
       }
-      const dataToBeSent = await this.sectionService.findMany(
-        filter,
+      const dataToBeSent = await this.sectionService.findMany(filter, {
         pageNumber,
-      );
+      });
       return dataToBeSent;
     } catch (error) {
       throw error;
@@ -191,20 +193,21 @@ export class TeacherController {
       const filter: { student_id: string; attendance_date?: Date } = {
         student_id: existingStudent._id.toString(),
       };
-      if (attendance_date) {
+      if (
+        attendance_date &&
+        /^(\d{4})-(\d{2})-(\d{2})$/.test(attendance_date)
+      ) {
         console.log('This is Attendance Date: ', attendance_date);
 
         const [year, month, day] = attendance_date.split('-').map(Number);
 
-        if (!isNaN(year) && !isNaN(month) && !isNaN(day)) {
-          const startDate = new Date(Date.UTC(year, month - 1, day, 0, 0, 0));
-          const endDate = new Date(
-            Date.UTC(year, month - 1, day, 23, 59, 59, 999),
-          );
+        const startDate = new Date(Date.UTC(year, month - 1, day, 0, 0, 0));
+        const endDate = new Date(
+          Date.UTC(year, month - 1, day, 23, 59, 59, 999),
+        );
 
-          filter.attendance_date = { $gte: startDate, $lt: endDate } as any;
-          console.log('This is Filter: ', filter);
-        }
+        filter.attendance_date = { $gte: startDate, $lt: endDate } as any;
+        console.log('This is Filter: ', filter);
       }
       const attendanceData = await this.attendanceService.findMany(filter, {
         pageNumber: page,
@@ -229,7 +232,6 @@ export class TeacherController {
       // const endDate = new Date(Date.UTC(year, month, day, 23, 59, 59, 999));
 
       const existingStudent = await this.studentService.findUnlimited();
-      console.log('This is Existing Student: ', existingStudent);
 
       //First find section
       for (let i = 0; i < existingStudent.length; i++) {
@@ -251,6 +253,7 @@ export class TeacherController {
             },
           };
           await this.attendanceService.createAttendance(attendanceData);
+          console.log('Attendance Created');
         }
       }
       return null;

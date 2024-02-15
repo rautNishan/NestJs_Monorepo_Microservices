@@ -53,6 +53,8 @@ export class UserProtectedGuard implements CanActivate {
         break;
       }
       case 'student': {
+        console.log('This is student route');
+        console.log(request['user'].role);
         if (request['user'].role !== APP_USER_ROLES.STUDENT) {
           throw new HttpException(
             'Not Permission Only Student can Access.',

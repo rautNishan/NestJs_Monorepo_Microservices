@@ -29,6 +29,7 @@ import {
   TeacherMakeStudentAttendanceDoc,
   TeacherUpdateStudentAttendanceDoc,
 } from './docs/teacher.docs';
+import { Cron } from '@nestjs/schedule';
 @ApiTags('Teacher')
 @Controller({
   version: '1',
@@ -74,16 +75,14 @@ export class TeacherController {
     @GetUserInformation() user?: IAuthenticatedUser,
   ) {
     const id = user.id;
-    console.log('This is Section', section);
     const pageNumber = Number(page ? page : PAGINATION_PAGE);
-    if (section) console.log('This is section', section);
+
     const result = await firstValueFrom(
       this.client.send(
         { cmd: SECTION_TCP.TEACHER_GET_ALL_SECTION },
         { id, section, pageNumber },
       ),
     );
-    console.log('This is result', result);
     return result;
   }
 
@@ -120,8 +119,8 @@ export class TeacherController {
     @Param('college_id') college_id: string,
     @Body() data: any,
   ) {
-    console.log('This is Data', data);
-    console.log('This is id', college_id);
+    console.log('This is College_id', college_id);
+
     const result = await firstValueFrom(
       this.client.send(
         { cmd: TEACHER_TCP.TEACHER_ADD_STUDENT_ATTENDANCE },

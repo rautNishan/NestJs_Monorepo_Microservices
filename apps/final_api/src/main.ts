@@ -23,6 +23,7 @@ async function bootstrap() {
   app.useGlobalFilters(new AllExceptionsFilter());
   // app.useGlobalFilters(new BadRequestExceptionFilter());
   SwaggerModule.setup('api', app, document);
-  await app.listen(3000);
+  const ip = process.env.PORT;
+  await app.listen(3000, ip);
 }
 bootstrap();

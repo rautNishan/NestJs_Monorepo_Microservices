@@ -69,12 +69,16 @@ export class SectionRepository extends BaseRepository<SectionEntity> {
   }
 
   async findMany(filter?: Record<string, any>, options?: Record<string, any>) {
-    console.log('This is Filter and Options: ', filter, options);
+    console.log('This is Filter and Options: ', filter);
     const { pageNumber } = options;
+    console.log('This is Page Number: ', pageNumber);
     const result = await this.sectionModel
       .find(filter)
       .limit(PAGINATION_PER_PAGE)
       .skip(PAGINATION_PER_PAGE * (pageNumber - 1));
-    return result;
+    const totalCount = await this.sectionModel.countDocuments(filter);
+    console.log('This is Result: ', result);
+
+    return { result, totalCount };
   }
 }
