@@ -7,21 +7,21 @@ import { AdminRepository } from '../repository/admin.repository';
 @Injectable()
 export class AdminService {
   constructor(
-    private readonly adminModule: AdminRepository,
+    private readonly adminRepo: AdminRepository,
     private readonly authService: AuthenticationService,
   ) {}
 
   async create(data: AdminDto): Promise<any> {
     try {
       data.password = await bcrypt.hash(data.password, 10);
-      await this.adminModule.create(data);
+      await this.adminRepo.create(data);
     } catch (error) {
       console.error('Error creating admin user: ', error);
     }
   }
 
   async find(query?: Record<string, any>) {
-    const result = await this.adminModule.find(query);
+    const result = await this.adminRepo.find(query);
     return result;
   }
 

@@ -252,6 +252,8 @@ export class TeacherController {
               endTime: sectionDetails.timeTable[j].endTime,
             },
           };
+          console.log('Loop Completed');
+
           await this.attendanceService.createAttendance(attendanceData);
           console.log('Attendance Created');
         }

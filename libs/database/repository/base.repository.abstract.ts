@@ -6,4 +6,8 @@ export abstract class BaseRepository<Entity> {
     this.repository = repository;
   }
   // abstract create(data: any);
+
+  async create(data: any) {
+    return await this.repository.create(data);
+  }
 }
