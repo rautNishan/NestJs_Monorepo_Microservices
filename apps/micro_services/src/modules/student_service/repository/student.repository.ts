@@ -40,12 +40,16 @@ export class StudentRepository extends BaseRepository<StudentEntity> {
 
   async findAll(options?: Record<string, any>) {
     try {
+      console.log('This is Options in find all', options);
+
       let { search_key, pageNumber } = options;
+
       search_key = { search_key: new RegExp(search_key, 'i') };
       pageNumber = PAGINATION_PER_PAGE * (pageNumber - 1);
       const totalCount = await this.studentModel.countDocuments();
       const existingData = await this.studentModel
         .find(search_key)
+        .where('section:[]')
         .limit(PAGINATION_PER_PAGE)
         .skip(pageNumber);
 
@@ -55,7 +59,26 @@ export class StudentRepository extends BaseRepository<StudentEntity> {
       throw error;
     }
   }
+  async findAllWithoutSection(options?: Record<string, any>) {
+    try {
+      let { search_key, pageNumber } = options;
+      const { section } = options;
+      console.log('This is Search Key: ', search_key, pageNumber, section);
+      search_key = { search_key: new RegExp(search_key, 'i') };
+      pageNumber = PAGINATION_PER_PAGE * (pageNumber - 1);
+      const totalCount = await this.studentModel.countDocuments();
+      const existingData = await this.studentModel
+        .find({ search_key, section: { $size: section } })
+        .where('section:[]')
+        .limit(PAGINATION_PER_PAGE)
+        .skip(pageNumber);
 
+      return { existingData, totalCount };
+    } catch (error) {
+      console.log('This is Error in Repository: ', error);
+      throw error;
+    }
+  }
   async update(data: any) {
     try {
       const result = await this.studentModel.findOneAndUpdate(

@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as Joi from 'joi';
-import APP_CONFIG from 'libs/config/app.config';
+import APP_CONFIG from '../../libs/config/app.config';
 import { UserProtectedGuard } from './guard/authentication.guard';
 import { AuthenticationService } from './services/authentication.service';
 @Module({

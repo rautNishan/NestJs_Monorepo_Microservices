@@ -8,7 +8,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
-import { APP_USER_ROLES } from 'libs/constants/roles/app.user.roles';
+import { APP_USER_ROLES } from '../../constants/roles/app.user.roles';
 
 @Injectable()
 export class UserProtectedGuard implements CanActivate {

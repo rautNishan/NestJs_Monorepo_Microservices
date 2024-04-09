@@ -9,6 +9,7 @@ import { AttendanceService } from '../../attendance/services/attendance.service'
 import { SectionService } from '../../section/services/section.service';
 import { StudentService } from '../../student_service/services/student.service';
 import { TeacherService } from '../services/teacher.service';
+import * as moment from 'moment';
 
 @Controller({})
 export class TeacherController {
@@ -145,7 +146,7 @@ export class TeacherController {
         console.log('This is EndTimeHour: ', endTimeHour);
         console.log('This is EndTimeMinute: ', endTimeMinute);
 
-        if (incomingHour >= startTimeHour && incomingHour <= endTimeHour) {
+        if (incomingHour >= startTimeHour && incomingHour < endTimeHour) {
           // if (
           //   incomingMinute >= startTimeMinute &&
           //   incomingMinute <= endTimeMinute
@@ -231,34 +232,55 @@ export class TeacherController {
       // const startDate = new Date(Date.UTC(year, month, day, 0, 0, 0));
       // const endDate = new Date(Date.UTC(year, month, day, 23, 59, 59, 999));
 
-      const existingStudent = await this.studentService.findUnlimited();
+      const nowDate = new Date();
+      const dateString = nowDate.toISOString().split('T')[0];
 
-      //First find section
-      for (let i = 0; i < existingStudent.length; i++) {
-        const sectionDetails = await this.sectionService.find({
-          section: existingStudent[i].section,
-        });
-        const sectionTimeTableLength = sectionDetails.timeTable.length;
-        for (let j = 0; j < sectionTimeTableLength; j++) {
-          const attendanceData: IAttendance = {
-            student_id: existingStudent[i]._id.toString(),
-            student_name: existingStudent[i].name,
+      // Create a date object for the start of the day
+      const startOfDay = moment(dateString).startOf('day').toDate();
+
+      // Create a date object for the end of the day
+      const endOfDay = moment(dateString).endOf('day').toDate();
+
+      const existingAttendance = await this.attendanceService.findOne({
+        attendance_date: {
+          $gte: startOfDay,
+          $lt: endOfDay,
+        },
+      });
+
+      //If the attendance is already made there is no need to make another attendance
+      if (!existingAttendance) {
+        console.log('This is existingAttendance: ', existingAttendance);
+        const existingStudent = await this.studentService.findUnlimited();
+        console.log('This is ExistingStudent: ', existingStudent);
+
+        //First find section
+        for (let i = 0; i < existingStudent.length; i++) {
+          const sectionDetails = await this.sectionService.find({
             section: existingStudent[i].section,
-            attendance_date: new Date(),
-            status: ATTENDANCE_STATUS.ABSENT,
-            timeTable: {
-              subject: sectionDetails.timeTable[j].subject,
-              startTime: sectionDetails.timeTable[j].startTime,
-              endTime: sectionDetails.timeTable[j].endTime,
-            },
-          };
-          console.log('Loop Completed');
+          });
+          const sectionTimeTableLength = sectionDetails.timeTable.length;
+          for (let j = 0; j < sectionTimeTableLength; j++) {
+            const attendanceData: IAttendance = {
+              student_id: existingStudent[i]._id.toString(),
+              student_name: existingStudent[i].name,
+              section: existingStudent[i].section,
+              attendance_date: new Date(),
+              status: ATTENDANCE_STATUS.ABSENT,
+              timeTable: {
+                subject: sectionDetails.timeTable[j].subject,
+                startTime: sectionDetails.timeTable[j].startTime,
+                endTime: sectionDetails.timeTable[j].endTime,
+              },
+            };
+            console.log('Loop Completed');
 
-          await this.attendanceService.createAttendance(attendanceData);
-          console.log('Attendance Created');
+            await this.attendanceService.createAttendance(attendanceData);
+            console.log('Attendance Created');
+          }
         }
       }
-      return null;
+      return {};
     } catch (error) {
       throw error;
     }

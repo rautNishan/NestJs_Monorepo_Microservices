@@ -154,6 +154,7 @@ export class TeacherController {
   //And later when the camera is on and if student is detected
   //then addStudentAttendance function will be called to update those student attendance who are present
   // @Cron(' 1 * * * * *')
+  @Get('/automatic-absent-attendance')
   async automaticAbsentAttendance() {
     console.log('This function is called');
     await firstValueFrom(

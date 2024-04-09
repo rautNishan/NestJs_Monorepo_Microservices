@@ -120,4 +120,8 @@ export class TeacherRepository extends BaseRepository<TeacherEntity> {
       throw error;
     }
   }
+  // async findUnlimited(filter?: Record<string, any>) {
+  //   const result = await this.teacherModel.find(filter);
+  //   return result;
+  // }
 }

@@ -340,6 +340,7 @@ export class AdminController {
     @Query('page') page?: string,
   ) {
     try {
+      console.log('Requesting in get-all-student');
       const pageNumber = Number(page ? page : PAGINATION_PAGE);
 
       const result = await firstValueFrom(
@@ -352,6 +353,45 @@ export class AdminController {
       const teachers = result.existingData.map((teacher) =>
         instanceToPlain(new TeacherResponseSerialization(teacher)),
       );
+      return { teachers, totalCount: result.totalCount };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @AdminGetAllListStudentDoc()
+  @UseGuards(UserProtectedGuard)
+  @Get('/get-all-nonSection-student')
+  async getAllNonStudent(
+    @Query('search_key') search_key: string,
+    @Query('page') page?: string,
+  ) {
+    try {
+      console.log('Requesting in get-allNon-student');
+      const pageNumber = Number(page ? page : PAGINATION_PAGE);
+
+      const result = await firstValueFrom(
+        this.client.send(
+          { cmd: ADMIN_TCP.ADMIN_GET_ALL_NON_SECTION_STUDENT },
+          { search_key, pageNumber, section: 0 },
+        ),
+      );
+      const container = [];
+      for (let i = 0; i < result.existingData.length; i++) {
+        if (result.existingData[i].section.length == 0) {
+          container.push(result.existingData[i]);
+        }
+      }
+      //Serializing and sending back response
+      const teachers = container.map((teacher) =>
+        instanceToPlain(new TeacherResponseSerialization(teacher)),
+      );
+      // for (let i = 0; i <= teachers.length; i++) {
+      //   if (teachers[i].section.length > 0) {
+      //     teachers.pop(teachers[i]);
+      //   }
+      // }
+
       return { teachers, totalCount: result.totalCount };
     } catch (error) {
       throw error;
@@ -398,6 +438,7 @@ export class AdminController {
     @Query('page') page?: string,
   ) {
     try {
+      console.log('Requesting here');
       const pageNumber = Number(page ? page : PAGINATION_PAGE);
       const result = await firstValueFrom(
         this.client.send(

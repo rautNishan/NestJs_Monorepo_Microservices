@@ -267,8 +267,11 @@ export class AdminController {
         const section = await this.sectionService.find({
           section: existingTeacher.section[i],
         });
-        section.teacherCounts -= 1;
-        await this.sectionService.update(section);
+        if (section) {
+          section.teacherCounts -= 1;
+          console.log('After Find: ', section);
+          await this.sectionService.update(section);
+        }
       }
     }
     const result = await this.teacherService.delete(id);
@@ -413,6 +416,18 @@ export class AdminController {
     }
   }
 
+  @MessagePattern({ cmd: ADMIN_TCP.ADMIN_GET_ALL_NON_SECTION_STUDENT })
+  async getAllNonSectionStudent(options?: Record<string, any>) {
+    try {
+      options = { where: { section: [] } };
+      console.log('This is Options....', options);
+      const result = await this.studentService.findAll(options);
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   @MessagePattern({ cmd: ADMIN_TCP.ADMIN_UPDATE_STUDENT_BY_ID })
   async updateStudentById({ id, data }) {
     try {
@@ -506,6 +521,8 @@ export class AdminController {
   })
   async findAllStudentAccordingToSection(options?: Record<string, any>) {
     try {
+      console.log('This is Options', options);
+
       const result =
         await this.studentService.findAllAccordingToSection(options);
       return result;
